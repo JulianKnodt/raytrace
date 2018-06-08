@@ -6,10 +6,6 @@ import (
   "image/color"
 )
 
-import (
-  "sync"
-)
-
 const epsilon = 1e-6
 
 func checkIntersects(from, dir Vec3, objects []Object, lights []Light) color.Color {

@@ -10,7 +10,7 @@ type IndexedTriangleList struct {
   color Vec3
 }
 
-func (t TriangleList) GetTriangle(nth int) Triangle {
+func (t IndexedTriangleList) GetTriangle(nth int) Triangle {
 	return Triangle{
     t.vertices[t.order[3*nth]],
 		t.vertices[t.order[3*nth+1]],
@@ -18,28 +18,28 @@ func (t TriangleList) GetTriangle(nth int) Triangle {
     t.color}
 }
 
-func (t TriangleList) Size() int {
+func (t IndexedTriangleList) Size() int {
 	return len(t.order) / 3
 }
 
-func (t *TriangleList) AddTriangle(tri Triangle) {
+func (t *IndexedTriangleList) AddTriangle(tri Triangle) {
 	t.vertices = append(t.vertices, tri.a, tri.b, tri.c)
 }
 
-func NewTriangleList(color Vec3) TriangleList {
-	return TriangleList{make([]Vec3, 0), make([]int, 0), color}
+func NewIndexedTriangleList(color Vec3) IndexedTriangleList {
+	return IndexedTriangleList{make([]Vec3, 0), make([]int, 0), color}
 }
 
-func (t *TriangleList) AddPolySet(points []Vec3, order []int) {
-  t.vertices = append(t.vertices, points)
-  t.order = append(t.order, order)
+func (t *IndexedTriangleList) AddPolySet(points []Vec3, order []int) {
+  t.vertices = append(t.vertices, points...)
+  t.order = append(t.order, order...)
 }
 
-func (t TriangleList) Color() Vec3 {
+func (t IndexedTriangleList) Color() Vec3 {
   return t.color
 }
 
-func (t TriangleList) Intersects(origin, dir Vec3) (float64, bool) {
+func (t IndexedTriangleList) Intersects(origin, dir Vec3) (float64, bool) {
   var pMax float64 = math.MaxFloat64
   var surface Triangle
   size := t.Size()
@@ -52,5 +52,5 @@ func (t TriangleList) Intersects(origin, dir Vec3) (float64, bool) {
       }
     }
   }
-  return pMax, surface != nil
+  return pMax, (&surface != nil)
 }
