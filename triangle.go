@@ -7,30 +7,33 @@ type Triangle struct {
   color Vec3
 }
 
-func (t Triangle) Intersects(origin, dir Vec3) (float64, bool) {
+func (t Triangle) Intersects(origin, dir Vec3) (float64, Object) {
   edge1 := Sub(t.b, t.a)
   edge2 := Sub(t.c, t.a)
   h := Cross(dir, edge2)
   area := Dot(edge1, h)
   if area > -epsilon && area < epsilon {
-    return -1, false // this is collinear
+    return -1, nil // this is collinear
   }
 
   invArea := 1/area
   s := Sub(origin, t.a)
   u := invArea * Dot(s, h)
   if u < 0 || u > 1 {
-    return -1, false
+    return -1, nil
   }
 
   q := Cross(s, edge1)
   v := invArea * Dot(dir, q)
   if v < 0 || (u + v) > 1 {
-    return -1, false
+    return -1, nil
   }
 
   par := invArea * Dot(edge2, q)
-  return par, par > epsilon
+  if par > epsilon {
+    return par, t
+  }
+  return par, nil
 }
 
 func (t Triangle) Color() Vec3 {

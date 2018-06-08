@@ -11,9 +11,12 @@ func NewPlane(p, norm Vec3, c Vec3) *Plane {
   return &Plane{p, Unit(norm), c}
 }
 
-func (p Plane) Intersects(origin, dir Vec3) (float64, bool) {
+func (p Plane) Intersects(origin, dir Vec3) (float64, Object) {
   param := Dot(Sub(p.point, origin), p.norm)/Dot(dir, p.norm)
-  return param, param >= 0
+  if param >= 0 {
+    return param, p
+  }
+  return param, nil
 }
 
 func (p Plane) Normal(_to Vec3) (Vec3, bool) {

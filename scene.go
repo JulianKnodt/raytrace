@@ -12,10 +12,10 @@ func checkIntersects(from, dir Vec3, objects []Object, lights []Light) color.Col
   maxDist := math.Inf(1)
   var near Object
   for _, o := range objects {
-    if dist, didIntersect := o.Intersects(from, dir); didIntersect {
+    if dist, intersecting := o.Intersects(from, dir); intersecting != nil {
       if dist < maxDist && dist > 0 {
         maxDist = dist
-        near = o
+        near = intersecting
       }
     }
   }
@@ -47,7 +47,7 @@ func checkIntersects(from, dir Vec3, objects []Object, lights []Light) color.Col
       }
     }
     for _, o := range objects {
-      if _, didInter := o.Intersects(inter, lightDir); didInter {
+      if _, intersecting := o.Intersects(inter, lightDir); intersecting != nil {
         canIllum = false
         break
       }

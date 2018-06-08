@@ -39,18 +39,18 @@ func (t IndexedTriangleList) Color() Vec3 {
   return t.color
 }
 
-func (t IndexedTriangleList) Intersects(origin, dir Vec3) (float64, bool) {
+func (t IndexedTriangleList) Intersects(origin, dir Vec3) (float64, Object) {
   var pMax float64 = math.MaxFloat64
   var surface Triangle
   size := t.Size()
   for i := 0; i < size; i ++ {
     curr := t.GetTriangle(i)
-    if p, hit := curr.Intersects(origin, dir); hit {
+    if p, hit := curr.Intersects(origin, dir); hit != nil {
       if p < pMax {
         pMax = p
         surface = curr
       }
     }
   }
-  return pMax, (&surface != nil)
+  return pMax, surface
 }
