@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"runtime"
 )
 
 const epsilon = 1e-6
@@ -59,19 +60,48 @@ func checkIntersects(from, dir v.Vec3, objects []Object, lights []Light) color.C
 	return v.ToRGBA(color)
 }
 
-func render(width, height float64, c Camera, o []Object, l []Light) image.RGBA {
+type coord struct {
+	x float64
+	y float64
+}
+
+type fieldColor struct {
+	x int
+  y int
+	color color.Color
+}
+
+func render(width, height float64, cam Camera, o []Object, l []Light) image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 	var invWidth float64 = 1.0 / width
 	var invHeight float64 = 1.0 / height
 	aspectRatio := width * invHeight
-	angle := math.Tan(math.Pi * 0.5 * c.FOV() / 180)
+	angle := math.Tan(math.Pi * 0.5 * cam.FOV() / 180)
+	out := make(chan fieldColor, int(height*width))
+	work := make(chan coord)
+
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go func() {
+			for c := range work {
+				xDir := (2*((c.x+0.5)*invWidth) - 1) * angle * aspectRatio
+				yDir := (1 - 2*((c.y+0.5)*invHeight)) * angle
+				direction := v.Unit(v.Sub(v.Vec3{xDir, yDir, -1}, cam.Location()))
+				out <- fieldColor{int(c.x), int(c.y), checkIntersects(v.Origin, direction, o, l)}
+			}
+		}()
+	}
 	for y := 0.0; y < height; y++ {
 		for x := 0.0; x < width; x++ {
-			xDir := (2*((x+0.5)*invWidth) - 1) * angle * aspectRatio
-			yDir := (1 - 2*((y+0.5)*invHeight)) * angle
-			direction := v.Unit(v.Sub(v.Vec3{xDir, yDir, -1}, c.Location()))
-			img.Set(int(x), int(y), checkIntersects(v.Origin, direction, o, l))
+			work <- coord{x, y}
 		}
 	}
+	close(work)
+
+  for i := 0; i < cap(out); i ++ {
+    o := <-out
+    img.Set(o.x, o.y, o.color)
+  }
+  close(out)
+
 	return *img
 }
