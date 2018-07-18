@@ -1,32 +1,35 @@
 package main
 
-var DefaultCameraDir = Vec3{0,0,-1}
+import (
+	v "github.com/julianknodt/raytrace/vector"
+)
+
+var DefaultCameraDir = v.Vec3{0, 0, -1}
 
 type Camera interface {
-  Location() Vec3
-  Direction() Vec3
-  FOV() float64
+	Location() v.Vec3
+	Direction() v.Vec3
+	FOV() float64
 }
 
 type StCamera struct {
-  loc Vec3
-  dir Vec3
-  fov float64
+	loc v.Vec3
+	dir v.Vec3
+	fov float64
 }
 
-func (s StCamera) Location() Vec3 {
-  return s.loc
+func (s StCamera) Location() v.Vec3 {
+	return s.loc
 }
 
-func (s StCamera) Direction() Vec3 {
-  return s.dir
+func (s StCamera) Direction() v.Vec3 {
+	return s.dir
 }
 
 func (s StCamera) FOV() float64 {
-  return s.fov
+	return s.fov
 }
 
-func NewStCamera(loc, dir Vec3, fov float64) StCamera {
-  return StCamera{loc, dir, fov}
+func NewStCamera(loc, dir v.Vec3, fov float64) StCamera {
+	return StCamera{loc, dir, fov}
 }
-

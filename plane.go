@@ -1,29 +1,32 @@
 package main
 
+import (
+	v "github.com/julianknodt/raytrace/vector"
+)
+
 type Plane struct {
-  point Vec3
-  norm Vec3
-  color Vec3
+	point v.Vec3
+	norm  v.Vec3
+	color v.Vec3
 }
 
 // should be open to other constructions
-func NewPlane(p, norm Vec3, c Vec3) *Plane {
-  return &Plane{p, Unit(norm), c}
+func NewPlane(p, norm v.Vec3, c v.Vec3) *Plane {
+	return &Plane{p, v.Unit(norm), c}
 }
 
-func (p Plane) Intersects(origin, dir Vec3) (float64, Object) {
-  param := Dot(Sub(p.point, origin), p.norm)/Dot(dir, p.norm)
-  if param >= 0 {
-    return param, p
-  }
-  return param, nil
+func (p Plane) Intersects(origin, dir v.Vec3) (float64, Object) {
+	param := v.Dot(v.Sub(p.point, origin), p.norm) / v.Dot(dir, p.norm)
+	if param >= 0 {
+		return param, p
+	}
+	return param, nil
 }
 
-func (p Plane) Normal(_to Vec3) (Vec3, bool) {
-  return p.norm, true
+func (p Plane) Normal(_to v.Vec3) (v.Vec3, bool) {
+	return p.norm, true
 }
 
-func (p Plane) Color() Vec3 {
-  return p.color
+func (p Plane) Color() v.Vec3 {
+	return p.color
 }
-
