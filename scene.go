@@ -66,8 +66,8 @@ type coord struct {
 }
 
 type fieldColor struct {
-	x int
-  y int
+	x     int
+	y     int
 	color color.Color
 }
 
@@ -97,11 +97,11 @@ func render(width, height float64, cam Camera, o []Object, l []Light) image.RGBA
 	}
 	close(work)
 
-  for i := 0; i < cap(out); i ++ {
-    o := <-out
-    img.Set(o.x, o.y, o.color)
-  }
-  close(out)
+	for i := 0; i < cap(out); i++ {
+		o := <-out
+		img.Set(o.x, o.y, o.color)
+	}
+	close(out)
 
 	return *img
 }
