@@ -23,10 +23,6 @@ func (t IndexedTriangleList) Size() int {
 	return len(t.order) / 3
 }
 
-func (t *IndexedTriangleList) AddTriangle(tri Triangle) {
-	t.vertices = append(t.vertices, tri.a, tri.b, tri.c)
-}
-
 func NewIndexedTriangleList(color v.Vec3) IndexedTriangleList {
 	return IndexedTriangleList{make([]v.Vec3, 0), make([]int, 0), color}
 }
