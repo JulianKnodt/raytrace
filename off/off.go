@@ -3,18 +3,12 @@ package off
 import (
 	"bufio"
 	"errors"
+	"github.com/julianknodt/raytrace/mesh"
 	v "github.com/julianknodt/raytrace/vector"
 	"os"
 	"strconv"
 	"strings"
 )
-
-type Mesh struct {
-	numVertices uint64
-	numFaces    uint64
-	Vertices    []v.Vec3
-	Order       [][]int
-}
 
 func getTriple(s string) (out v.Vec3, err error) {
 	parts := strings.Split(s, " ")
@@ -36,7 +30,7 @@ func getTriple(s string) (out v.Vec3, err error) {
 	return out, nil
 }
 
-func Decode(offFile *os.File) (*Mesh, error) {
+func Decode(offFile *os.File) (*mesh.Mesh, error) {
 	scanner := bufio.NewScanner(offFile)
 	scanner.Scan()
 	if scanner.Text() != "OFF" {
@@ -46,7 +40,7 @@ func Decode(offFile *os.File) (*Mesh, error) {
 	var numVertices uint64
 	var numFaces uint64
 
-	result := new(Mesh)
+	result := new(mesh.Mesh)
 
 	for scanner.Scan() {
 		text := scanner.Text()

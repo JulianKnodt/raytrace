@@ -1,6 +1,6 @@
 
 fmt:
-	go fmt ./... && go vet
+	go fmt ./... && go vet ./...
 
 binary: fmt 
 	go build
