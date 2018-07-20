@@ -9,6 +9,15 @@ type Vec3 [3]float64
 
 var Origin Vec3 = Vec3{0, 0, 0}
 
+func Equal(a, b Vec3) bool {
+	return a[0] == b[0] && a[1] == b[1] && a[2] == b[2]
+}
+
+func RelEqual(a, b Vec3) bool {
+	firstRel := a[0] / b[0]
+	return firstRel == a[1]/b[1] && firstRel == a[2]/b[2]
+}
+
 func Sub(a, b Vec3) (r Vec3) {
 	r[0] = a[0] - b[0]
 	r[1] = a[1] - b[1]

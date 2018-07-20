@@ -12,32 +12,10 @@ type Triangle struct {
 }
 
 func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, Object) {
-	edge1 := vec.Sub(t.b, t.a)
-	edge2 := vec.Sub(t.c, t.a)
-	h := vec.Cross(dir, edge2)
-	area := vec.Dot(edge1, h)
-	if area > -epsilon && area < epsilon {
-		return -1, nil // this is collinear
+	if param, intersects := vec.IntersectsTriangle(t.a, t.b, t.c, origin, dir); intersects {
+		return param, t
 	}
-
-	invArea := 1 / area
-	s := vec.Sub(origin, t.a)
-	u := invArea * vec.Dot(s, h)
-	if u < 0 || u > 1 {
-		return -1, nil
-	}
-
-	q := vec.Cross(s, edge1)
-	v := invArea * vec.Dot(dir, q)
-	if v < 0 || (u+v) > 1 {
-		return -1, nil
-	}
-
-	par := invArea * vec.Dot(edge2, q)
-	if par > epsilon {
-		return par, t
-	}
-	return par, nil
+	return -1, nil
 }
 
 func (t Triangle) Color() vec.Vec3 {
