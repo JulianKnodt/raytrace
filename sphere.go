@@ -1,26 +1,10 @@
 package main
 
 import (
+	obj "github.com/julianknodt/raytrace/object"
 	v "github.com/julianknodt/raytrace/vector"
 	"math"
 )
-
-/*
- Intersects: an object should have the
- ability to check whether it intersects with
- a vector
-
- Normal: an object should be able to determine a normal on its surface
-
- Color: an object should have a color
-*/
-type Object interface {
-	Intersects(origin, dir v.Vec3) (float64, Object)
-	Normal(to v.Vec3) (dir v.Vec3, invAble bool)
-	// invable relates to whether or not the normal can be flipped or not
-	// any 2d shape should be invertible
-	Color() v.Vec3
-}
 
 type Sphere struct {
 	center    v.Vec3
@@ -40,7 +24,7 @@ func (s Sphere) Color() v.Vec3 {
 	return s.color
 }
 
-func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, intersectingObject Object) {
+func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.Shape) {
 	center := v.Sub(s.center, origin)
 	toNormal := v.Dot(center, dir)
 	if toNormal < 0 {

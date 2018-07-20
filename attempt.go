@@ -1,6 +1,7 @@
 package main
 
 import (
+	obj "github.com/julianknodt/raytrace/object"
 	v "github.com/julianknodt/raytrace/vector"
 	"image/png"
 	"os"
@@ -17,7 +18,7 @@ func main() {
 	p := NewPlane(v.Vec3{0, -2, 0}, v.Vec3{0, 1, 0}, v.Vec3{0, 255, 0})
 	c := NewStCamera(v.Origin, DefaultCameraDir, 30.0)
 	l := PointLight{v.Vec3{10, 10, 10}, v.Vec3{255, 255, 255}}
-	img := render(width, height, c, []Object{*t, *s, *s2, *p}, []Light{l})
+	img := render(width, height, c, []obj.Object{*t, *s, *s2, *p}, []Light{l})
 	file, _ := os.OpenFile("./out.png", os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
 	png.Encode(file, &img)

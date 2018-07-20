@@ -1,6 +1,7 @@
 package main
 
 import (
+	obj "github.com/julianknodt/raytrace/object"
 	v "github.com/julianknodt/raytrace/vector"
 	"image"
 	"image/color"
@@ -10,9 +11,9 @@ import (
 
 const epsilon = 1e-6
 
-func checkIntersects(from, dir v.Vec3, objects []Object, lights []Light) color.Color {
+func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) color.Color {
 	maxDist := math.Inf(1)
-	var near Object
+	var near obj.Shape
 	for _, o := range objects {
 		if dist, intersecting := o.Intersects(from, dir); intersecting != nil {
 			if dist < maxDist && dist > 0 {
@@ -71,7 +72,7 @@ type fieldColor struct {
 	color color.Color
 }
 
-func render(width, height float64, cam Camera, o []Object, l []Light) image.RGBA {
+func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 	var invWidth float64 = 1.0 / width
 	var invHeight float64 = 1.0 / height

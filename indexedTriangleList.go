@@ -1,6 +1,7 @@
 package main
 
 import (
+	obj "github.com/julianknodt/raytrace/object"
 	v "github.com/julianknodt/raytrace/vector"
 	"math"
 )
@@ -36,7 +37,7 @@ func (t IndexedTriangleList) Color() v.Vec3 {
 	return t.color
 }
 
-func (t IndexedTriangleList) Intersects(origin, dir v.Vec3) (float64, Object) {
+func (t IndexedTriangleList) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
 	var pMax float64 = math.MaxFloat64
 	var surface Triangle
 	size := t.Size()

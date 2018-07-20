@@ -1,6 +1,7 @@
 package main
 
 import (
+	obj "github.com/julianknodt/raytrace/object"
 	vec "github.com/julianknodt/raytrace/vector"
 )
 
@@ -11,7 +12,7 @@ type Triangle struct {
 	color vec.Vec3
 }
 
-func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, Object) {
+func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, obj.Shape) {
 	if param, intersects := vec.IntersectsTriangle(t.a, t.b, t.c, origin, dir); intersects {
 		return param, t
 	}
