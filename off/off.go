@@ -3,6 +3,7 @@ package off
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"github.com/julianknodt/raytrace/mesh"
 	v "github.com/julianknodt/raytrace/vector"
 	"os"
@@ -92,4 +93,40 @@ func Decode(offFile *os.File) (*mesh.Mesh, error) {
 	}
 
 	return result, nil
+}
+
+func intArrToStringArr(a []int) []string {
+	result := make([]string, 0, len(a))
+	for _, v := range a {
+		result = append(result, string(v))
+	}
+	return result
+}
+
+func Encode(offFile *os.File, m mesh.Mesh) error {
+	if err := offFile.Truncate(0); err != nil {
+		return err
+	}
+
+	if _, err := offFile.Write([]byte("OFF\n")); err != nil {
+		return err
+	}
+
+	if _, err := offFile.Write([]byte(fmt.Sprintf("%d %d %d\n", m.Verts(), m.Faces(), m.Edges()))); err != nil {
+		return err
+	}
+
+	for _, v := range m.Vertices {
+		if _, err := offFile.Write([]byte(fmt.Sprintf("%f %f %f\n", v[0], v[1], v[2]))); err != nil {
+			return err
+		}
+	}
+
+	for _, order := range m.Order {
+		if _, err := offFile.Write([]byte(fmt.Sprintf("%d  %s", len(order), strings.Join(intArrToStringArr(order), " ")))); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -1,8 +1,10 @@
 package mesh
 
 import (
+  "math"
 	obj "github.com/julianknodt/raytrace/object"
 	v "github.com/julianknodt/raytrace/vector"
+  "github.com/julianknodt/raytrace/shapes"
 )
 
 type Mesh struct {
@@ -29,9 +31,21 @@ func (m Mesh) Faces() uint64 {
 	return m.numFaces
 }
 
-func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+func (m Mesh) Edges() (count uint64) {
 	for i := uint64(0); i < m.Faces(); i++ {
-		v.Intersects(m.FaceN(i), origin, dir)
+		count += uint64(len(m.FaceN(i)))
 	}
-	return -1, nil
+	return
+}
+
+func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+  min := math.Inf(1)
+  var shape obj.Shape := nil
+	for i := uint64(0); i < m.Faces(); i++ {
+		if t, intersects, a, b, c := v.Intersects(m.FaceN(i), origin, dir); intersects && t < min {
+       min = t
+       shape = shapes.NewTriangle(a, b, c, Vec3{200, 200, 200})
+    }
+	}
+	return min, shape
 }

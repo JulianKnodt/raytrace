@@ -7,8 +7,8 @@ import (
 var DefaultCameraDir = v.Vec3{0, 0, -1}
 
 type Camera interface {
-	Location() v.Vec3
-	Direction() v.Vec3
+	Location() Vec3
+	Direction() Vec3
 	FOV() float64
 }
 
