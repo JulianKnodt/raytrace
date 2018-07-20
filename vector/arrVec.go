@@ -1,5 +1,9 @@
 package vector
 
+func normalNoCheck(v []Vec3) (Vec3, bool) {
+	return Cross(Sub(v[0], v[1]), Sub(v[0], v[2])), true
+}
+
 func Normal(v []Vec3) (Vec3, bool) {
 	if !Coplanar(v) {
 		return Vec3{}, false

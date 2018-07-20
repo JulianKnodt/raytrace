@@ -2,6 +2,7 @@ package main
 
 import (
 	obj "github.com/julianknodt/raytrace/object"
+	"github.com/julianknodt/raytrace/shapes"
 	v "github.com/julianknodt/raytrace/vector"
 	"math"
 )
@@ -12,12 +13,12 @@ type IndexedTriangleList struct {
 	color    v.Vec3
 }
 
-func (t IndexedTriangleList) GetTriangle(nth int) Triangle {
-	return Triangle{
+func (t IndexedTriangleList) GetTriangle(nth int) *shapes.Triangle {
+	return shapes.NewTriangle(
 		t.vertices[t.order[3*nth]],
 		t.vertices[t.order[3*nth+1]],
 		t.vertices[t.order[3*nth+2]],
-		t.color}
+		t.color)
 }
 
 func (t IndexedTriangleList) Size() int {
@@ -39,14 +40,14 @@ func (t IndexedTriangleList) Color() v.Vec3 {
 
 func (t IndexedTriangleList) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
 	var pMax float64 = math.MaxFloat64
-	var surface Triangle
+	var surface shapes.Triangle
 	size := t.Size()
 	for i := 0; i < size; i++ {
 		curr := t.GetTriangle(i)
 		if p, hit := curr.Intersects(origin, dir); hit != nil {
 			if p < pMax {
 				pMax = p
-				surface = curr
+				surface = *curr
 			}
 		}
 	}

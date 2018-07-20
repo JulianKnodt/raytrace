@@ -1,4 +1,4 @@
-package main
+package shapes
 
 import (
 	obj "github.com/julianknodt/raytrace/object"
