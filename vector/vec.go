@@ -36,6 +36,10 @@ func SqrMagn(a Vec3) float64 {
 	return a[0]*a[0] + a[1]*a[1] + a[2]*a[2]
 }
 
+func Magn(a Vec3) float64 {
+	return math.Sqrt(SqrMagn(a))
+}
+
 func Inv(a Vec3) Vec3 {
 	return Vec3{-a[0], -a[1], -a[2]}
 }

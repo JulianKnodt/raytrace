@@ -1,9 +1,9 @@
-package main
+package shapes
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	v "github.com/julianknodt/raytrace/vector"
 	"math"
+	obj "raytrace/object"
+	v "raytrace/vector"
 )
 
 type Sphere struct {
@@ -44,4 +44,35 @@ func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.Shape) {
 	} else {
 		return t0, s
 	}
+}
+
+func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.Shape) {
+	centerDiff := v.Sub(origin, s.center)
+	a := v.SqrMagn(dir)
+	b := 2 * v.Dot(dir, centerDiff)
+	c := v.SqrMagn(centerDiff) - s.radiusSqr
+	discrim := (b * b) - (4 * a * c)
+	if discrim < 0 || a == 0 {
+		return t, nil
+	}
+
+	if v.SqrMagn(centerDiff) <= s.radiusSqr {
+		return t, nil
+	}
+
+	t0 := (-b + math.Sqrt(discrim)) / (2 * a)
+	t1 := (-b - math.Sqrt(discrim)) / (2 * a)
+	shape = s
+	switch {
+	case t0 < 0 && t1 < 0:
+		return t, nil
+	case t0 < 0:
+		t = t1
+	case t1 < 0:
+		t = t0
+	default:
+		// return closest point
+		t = math.Min(t0, t1)
+	}
+	return
 }

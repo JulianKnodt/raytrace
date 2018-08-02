@@ -1,8 +1,8 @@
 package shapes
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	vec "github.com/julianknodt/raytrace/vector"
+	obj "raytrace/object"
+	vec "raytrace/vector"
 )
 
 type Triangle struct {

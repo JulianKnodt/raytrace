@@ -1,8 +1,8 @@
 package main
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	v "github.com/julianknodt/raytrace/vector"
+	obj "raytrace/object"
+	v "raytrace/vector"
 )
 
 type Plane struct {

@@ -1,7 +1,7 @@
 package object
 
 import (
-	v "github.com/julianknodt/raytrace/vector"
+	v "raytrace/vector"
 )
 
 /*

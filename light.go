@@ -1,7 +1,7 @@
 package main
 
 import (
-	v "github.com/julianknodt/raytrace/vector"
+	v "raytrace/vector"
 )
 
 /*

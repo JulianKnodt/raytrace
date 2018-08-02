@@ -1,18 +1,18 @@
 package main
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	"github.com/julianknodt/raytrace/shapes"
-	v "github.com/julianknodt/raytrace/vector"
 	"image/png"
 	"os"
+	obj "raytrace/object"
+	"raytrace/shapes"
+	v "raytrace/vector"
 )
 
 func main() {
 	width := 800.0
 	height := 600.0
-	s := NewSphere(v.Vec3{0, 0, -5}, 1, v.Vec3{255, 0, 0})
-	s2 := NewSphere(v.Vec3{-1.5, 0, -5}, 1, v.Vec3{0, 0, 255})
+	s := shapes.NewSphere(v.Vec3{0, 0, -5}, 1, v.Vec3{255, 0, 0})
+	s2 := shapes.NewSphere(v.Vec3{-1.5, 0, -5}, 1, v.Vec3{0, 0, 255})
 
 	t := shapes.NewTriangle(v.Vec3{0, 0, -6}, v.Vec3{2, 0, -6}, v.Vec3{1, 2, -6}, v.Vec3{122, 122, 122})
 

@@ -1,14 +1,14 @@
 package main
 
 import (
-	v "github.com/julianknodt/raytrace/vector"
+	v "raytrace/vector"
 )
 
 var DefaultCameraDir = v.Vec3{0, 0, -1}
 
 type Camera interface {
-	Location() Vec3
-	Direction() Vec3
+	Location() v.Vec3
+	Direction() v.Vec3
 	FOV() float64
 }
 

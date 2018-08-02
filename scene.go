@@ -1,11 +1,11 @@
 package main
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	v "github.com/julianknodt/raytrace/vector"
 	"image"
 	"image/color"
 	"math"
+	obj "raytrace/object"
+	v "raytrace/vector"
 	"runtime"
 )
 
