@@ -2,6 +2,7 @@ package shapes
 
 import (
 	"math"
+	m "raytrace/material"
 	obj "raytrace/object"
 	v "raytrace/vector"
 )
@@ -9,19 +10,19 @@ import (
 type Sphere struct {
 	center    v.Vec3
 	radiusSqr float64
-	color     v.Vec3
+	m.Material
 }
 
-func NewSphere(center v.Vec3, radius float64, color v.Vec3) *Sphere {
-	return &Sphere{center, radius * radius, color}
+func NewSphere(center v.Vec3, radius float64, mat m.Material) *Sphere {
+	return &Sphere{center, radius * radius, mat}
 }
 
 func (s Sphere) Normal(p v.Vec3) (v.Vec3, bool) {
 	return v.Sub(p, s.center), false
 }
 
-func (s Sphere) Color() v.Vec3 {
-	return s.color
+func (s Sphere) Mat() m.Material {
+	return s.Material
 }
 
 func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.Shape) {

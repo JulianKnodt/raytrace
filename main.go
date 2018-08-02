@@ -4,14 +4,18 @@ import (
 	"flag"
 	"os"
 	"raytrace/off"
+	//	"raytrace/obj" // oops deleted this from git by accident
+)
+
+var (
+	width  = flag.Float64("width", 800.0, "Width to render")
+	height = flag.Float64("height", 600.0, "Height to render")
+	out    = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
 )
 
 func _main() {
 	off := flag.String("off", "", "Off file to render")
 	obj := flag.String("obj", "", "Obj file to render")
-	width := flag.Float64("width", 800.0, "Width to render")
-	height := flag.Float64("height", 600.0, "Height to render")
-	out := flag.String("out", "out.png", "Filepath of out file when rendering one scene")
 
 	flag.Parse()
 
@@ -32,5 +36,12 @@ func Off(filename string) {
 }
 
 func Obj(filename string) {
+	/*
+	   f, err := os.Open(filename)
+	   if err != nil {
+	     panic(err)
+	   }
 
+	   obj.Decode(f)
+	*/
 }

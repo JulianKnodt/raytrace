@@ -55,7 +55,7 @@ func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) col
 			}
 		}
 		if canIllum {
-			v.AddSet(&color, v.SMul(align, near.Color()))
+			v.AddSet(&color, v.SMul(align, near.Mat().Color()))
 		}
 	}
 	return v.ToRGBA(color)

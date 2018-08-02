@@ -1,6 +1,7 @@
 package object
 
 import (
+	m "raytrace/material"
 	v "raytrace/vector"
 )
 
@@ -21,5 +22,5 @@ type Shape interface {
 	Normal(to v.Vec3) (dir v.Vec3, invAble bool)
 	// invable relates to whether or not the normal can be flipped or not
 	// any 2d shape should be invertible
-	Color() v.Vec3
+	Mat() m.Material
 }

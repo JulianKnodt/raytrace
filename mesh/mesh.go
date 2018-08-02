@@ -2,6 +2,7 @@ package mesh
 
 import (
 	"math"
+	mat "raytrace/material"
 	obj "raytrace/object"
 	"raytrace/shapes"
 	v "raytrace/vector"
@@ -45,7 +46,7 @@ func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
 		face := m.FaceN(i)
 		if t, intersects := v.Intersects(face, origin, dir); intersects && t < min {
 			min = t
-			shape = shapes.NewTriangle(face[0], face[1], face[2], v.Vec3{200, 200, 200})
+			shape = shapes.NewTriangle(face[0], face[1], face[2], mat.Placeholder{})
 		}
 	}
 	return min, shape
