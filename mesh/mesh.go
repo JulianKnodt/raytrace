@@ -18,8 +18,8 @@ type Mesh struct {
 func (m Mesh) FaceN(n uint64) []v.Vec3 {
 	order := m.Order[n]
 	out := make([]v.Vec3, 0, len(order))
-	for _, v := range order {
-		out = append(out, m.Vertices[v])
+	for _, p := range order {
+		out = append(out, m.Vertices[p])
 	}
 	return out
 }

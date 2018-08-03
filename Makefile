@@ -4,3 +4,6 @@ fmt:
 
 binary: fmt 
 	go build
+
+test: fmt
+	go test ./...

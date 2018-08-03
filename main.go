@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"os"
+	"raytrace/obj"
 	"raytrace/off"
-	//	"raytrace/obj" // oops deleted this from git by accident
 )
 
 var (
@@ -36,12 +36,10 @@ func Off(filename string) {
 }
 
 func Obj(filename string) {
-	/*
-	   f, err := os.Open(filename)
-	   if err != nil {
-	     panic(err)
-	   }
+	f, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
 
-	   obj.Decode(f)
-	*/
+	obj.Decode(f)
 }

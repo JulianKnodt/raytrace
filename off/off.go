@@ -4,35 +4,15 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"os"
+	"io"
 	"raytrace/mesh"
 	v "raytrace/vector"
 	"strconv"
 	"strings"
 )
 
-func getTriple(s string) (out v.Vec3, err error) {
-	parts := strings.Split(s, " ")
-	n, err := strconv.ParseFloat(parts[0], 64)
-	if err != nil {
-		return out, err
-	}
-	out[0] = n
-	n, err = strconv.ParseFloat(parts[1], 64)
-	if err != nil {
-		return out, err
-	}
-	out[1] = n
-	n, err = strconv.ParseFloat(parts[2], 64)
-	if err != nil {
-		return out, err
-	}
-	out[2] = n
-	return out, nil
-}
-
-func Decode(offFile *os.File) (*mesh.Mesh, error) {
-	scanner := bufio.NewScanner(offFile)
+func Decode(r io.Reader) (*mesh.Mesh, error) {
+	scanner := bufio.NewScanner(r)
 	scanner.Scan()
 	if scanner.Text() != "OFF" {
 		return nil, errors.New("Not an OFF file")
@@ -65,11 +45,12 @@ func Decode(offFile *os.File) (*mesh.Mesh, error) {
 
 	for i := uint64(0); i < numVertices; i++ {
 		scanner.Scan()
-		vec, err := getTriple(scanner.Text())
+		var x, y, z float64
+		_, err := fmt.Sscanf(scanner.Text(), "%f %f %f", &x, &y, &z)
 		if err != nil {
 			return nil, err
 		}
-		result.Vertices = append(result.Vertices, vec)
+		result.Vertices = append(result.Vertices, v.Vec3{x, y, z})
 	}
 
 	for i := uint64(0); i < numFaces; i++ {
@@ -103,27 +84,23 @@ func intArrToStringArr(a []int) []string {
 	return result
 }
 
-func Encode(offFile *os.File, m mesh.Mesh) error {
-	if err := offFile.Truncate(0); err != nil {
+func Encode(w io.Writer, m mesh.Mesh) error {
+	if _, err := fmt.Fprint(w, "OFF\n"); err != nil {
 		return err
 	}
 
-	if _, err := offFile.Write([]byte("OFF\n")); err != nil {
-		return err
-	}
-
-	if _, err := offFile.Write([]byte(fmt.Sprintf("%d %d %d\n", m.Verts(), m.Faces(), m.Edges()))); err != nil {
+	if _, err := fmt.Fprintf(w, "%d %d %d\n", m.Verts(), m.Faces(), m.Edges()); err != nil {
 		return err
 	}
 
 	for _, v := range m.Vertices {
-		if _, err := offFile.Write([]byte(fmt.Sprintf("%f %f %f\n", v[0], v[1], v[2]))); err != nil {
+		if _, err := fmt.Fprintf(w, "%f %f %f\n", v[0], v[1], v[2]); err != nil {
 			return err
 		}
 	}
 
 	for _, order := range m.Order {
-		if _, err := offFile.Write([]byte(fmt.Sprintf("%d  %s", len(order), strings.Join(intArrToStringArr(order), " ")))); err != nil {
+		if _, err := fmt.Fprintf(w, "%d  %s\n", len(order), strings.Join(intArrToStringArr(order), " ")); err != nil {
 			return err
 		}
 	}
