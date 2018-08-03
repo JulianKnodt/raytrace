@@ -15,6 +15,15 @@ func Normal(v []Vec3) (Vec3, bool) {
 	return Cross(Sub(v[0], v[1]), Sub(v[0], v[2])), true
 }
 
+func Shift(v []Vec3, x, y, z float64) []Vec3 {
+	shiftVec := Vec3{x, y, z}
+	result := make([]Vec3, 0, len(v))
+	for i, vec := range v {
+		result[i] = Add(vec, shiftVec)
+	}
+	return result
+}
+
 func Coplanar(v []Vec3) bool {
 	if len(v) <= 3 {
 		return true
