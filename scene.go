@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"math"
 	obj "raytrace/object"
 	v "raytrace/vector"
 	"runtime"
+	"sync/atomic"
+	"time"
 )
 
 const epsilon = 1e-6
@@ -79,18 +82,21 @@ func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.
 	aspectRatio := width * invHeight
 	angle := math.Tan(math.Pi * 0.5 * cam.FOV() / 180)
 	out := make(chan fieldColor, int(height*width))
-	work := make(chan coord)
+	work := make(chan coord, int(height*width))
+	count := int64(0)
 
-	for i := 0; i < runtime.NumCPU(); i++ {
+	for i := 0; i < runtime.NumCPU()-1; i++ {
 		go func() {
 			for c := range work {
 				xDir := (2*((c.x+0.5)*invWidth) - 1) * angle * aspectRatio
 				yDir := (1 - 2*((c.y+0.5)*invHeight)) * angle
 				direction := v.Unit(v.Sub(v.Vec3{xDir, yDir, -1}, cam.Location()))
 				out <- fieldColor{int(c.x), int(c.y), checkIntersects(v.Origin, direction, o, l)}
+				atomic.AddInt64(&count, 1)
 			}
 		}()
 	}
+
 	for y := 0.0; y < height; y++ {
 		for x := 0.0; x < width; x++ {
 			work <- coord{x, y}
@@ -98,10 +104,15 @@ func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.
 	}
 	close(work)
 
+	timer := time.NewTimer(5 * time.Second)
 	for i := 0; i < cap(out); i++ {
-		o := <-out
-		print(".")
-		img.Set(o.x, o.y, o.color)
+		select {
+		case o := <-out:
+			img.Set(o.x, o.y, o.color)
+		case <-timer.C:
+			fmt.Printf("%.2f : %d/%d\n", float64(count)/(height*width), count, int(height*width))
+			timer.Reset(5 * time.Second)
+		}
 	}
 	close(out)
 

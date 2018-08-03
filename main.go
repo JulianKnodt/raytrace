@@ -16,6 +16,7 @@ var (
 	width  = flag.Float64("width", 800.0, "Width to render")
 	height = flag.Float64("height", 600.0, "Height to render")
 	out    = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
+	prof   = flag.Bool("prof", false, "Profile rendering")
 )
 
 func main() {
