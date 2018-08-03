@@ -100,6 +100,7 @@ func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.
 
 	for i := 0; i < cap(out); i++ {
 		o := <-out
+		print(".")
 		img.Set(o.x, o.y, o.color)
 	}
 	close(out)

@@ -9,7 +9,7 @@ import (
 	v "raytrace/vector"
 )
 
-func main() {
+func _main() {
 	width := 800.0
 	height := 600.0
 	s := shapes.NewSphere(v.Vec3{0, 0, -5}, 1, &m.BasicRed)
