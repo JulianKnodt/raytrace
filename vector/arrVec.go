@@ -1,5 +1,9 @@
 package vector
 
+import (
+	"math"
+)
+
 func normalNoCheck(v []Vec3) (Vec3, bool) {
 	return Cross(Sub(v[0], v[1]), Sub(v[0], v[2])), true
 }
@@ -78,4 +82,43 @@ func Intersects(v []Vec3, origin, dir Vec3) (float64, bool) {
 		}
 	}
 	return -1, false
+}
+
+func Interpolate(points [3]Vec3, barycentric Vec3) Vec3 {
+	result := Vec3{}
+	for i, point := range points {
+		AddSet(&result, SMul(barycentric[i], point))
+	}
+	return result
+}
+
+func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool, Vec3) {
+	edge1 := Sub(b, a)
+	edge2 := Sub(c, a)
+
+	n := Unit(Cross(edge1, edge2)) // normal to triangle
+
+	q := Cross(dir, edge2)
+	p := Dot(edge1, q)
+
+	if Dot(n, dir) >= 0 || math.Abs(p) <= epsilon {
+		return -1, false, Vec3{}
+	}
+
+	s := Op(Sub(origin, a), func(px float64) float64 {
+		return px / p
+	})
+	r := Cross(s, edge1)
+
+	br := Vec3{}
+	br[0] = Dot(s, q)
+	br[1] = Dot(r, dir)
+	br[2] = 1 - br[0] - br[1]
+
+	if br[0] < 0 || br[1] < 0 || br[2] < 0 {
+		return -1, false, br
+	}
+
+	t := Dot(edge2, r)
+	return t, t >= 0, br
 }

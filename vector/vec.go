@@ -84,6 +84,11 @@ func sqr(a float64) float64 {
 	return a * a
 }
 
+// Returns radians between a and b
+func Theta(a, b Vec3) float64 {
+	return math.Acos(Dot(a, b) / (Magn(a) * Magn(b)))
+}
+
 func SMul(k float64, v Vec3) (r Vec3) {
 	r[0] = k * v[0]
 	r[1] = k * v[1]
@@ -108,4 +113,11 @@ func ToRGBA(a Vec3) color.RGBA {
 
 func Cross(a, b Vec3) Vec3 {
 	return Vec3{a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]}
+}
+
+func Op(in Vec3, op func(float64) float64) (out Vec3) {
+	for i, v := range in {
+		out[i] = op(v)
+	}
+	return
 }
