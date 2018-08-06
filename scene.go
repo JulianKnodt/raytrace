@@ -14,6 +14,26 @@ import (
 
 const epsilon = 1e-6
 
+type intersect func(v.Vec3, v.Vec3, []obj.Object, []Light) color.Color
+
+func simpleIntersect(origin, dir v.Vec3, objects []obj.Object, lights []Light) color.Color {
+	maxDist := math.Inf(1)
+	var near obj.Shape
+	for _, o := range objects {
+		if dist, intersecting := o.Intersects(origin, dir); intersecting != nil {
+			if dist < maxDist && dist > 0 {
+				maxDist = dist
+				near = intersecting
+			}
+		}
+	}
+
+	if near == nil {
+		return color.Black
+	}
+	return color.White
+}
+
 func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) color.Color {
 	maxDist := math.Inf(1)
 	var near obj.Shape
@@ -75,7 +95,16 @@ type fieldColor struct {
 	color color.Color
 }
 
-func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.RGBA {
+// Returns an image of given height and width
+// with the given objects using 'inter' intersection
+// algorithm choice
+func render(
+	width, height float64,
+	cam Camera,
+	o []obj.Object,
+	l []Light,
+	inter intersect,
+) image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 	var invWidth float64 = 1.0 / width
 	var invHeight float64 = 1.0 / height
@@ -85,13 +114,13 @@ func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.
 	work := make(chan coord, int(height*width))
 	count := int64(0)
 
-	for i := 0; i < runtime.NumCPU()-1; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go func() {
 			for c := range work {
 				xDir := (2*((c.x+0.5)*invWidth) - 1) * angle * aspectRatio
 				yDir := (1 - 2*((c.y+0.5)*invHeight)) * angle
 				direction := v.Unit(v.Sub(v.Vec3{xDir, yDir, -1}, cam.Location()))
-				out <- fieldColor{int(c.x), int(c.y), checkIntersects(v.Origin, direction, o, l)}
+				out <- fieldColor{int(c.x), int(c.y), inter(v.Origin, direction, o, l)}
 				atomic.AddInt64(&count, 1)
 			}
 		}()
@@ -105,16 +134,19 @@ func render(width, height float64, cam Camera, o []obj.Object, l []Light) image.
 	close(work)
 
 	timer := time.NewTimer(5 * time.Second)
-	for i := 0; i < cap(out); i++ {
+	for count < int64(height*width) {
 		select {
 		case o := <-out:
 			img.Set(o.x, o.y, o.color)
 		case <-timer.C:
-			fmt.Printf("%.2f : %d/%d\n", float64(count)/(height*width), count, int(height*width))
+			fmt.Printf("%.3f : %d/%d\n", float64(count)/(height*width), count, int(height*width))
 			timer.Reset(5 * time.Second)
 		}
 	}
 	close(out)
+	for o := range out {
+		img.Set(o.x, o.y, o.color)
+	}
 
 	return *img
 }

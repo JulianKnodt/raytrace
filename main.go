@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	width  = flag.Float64("width", 800.0, "Width to render")
-	height = flag.Float64("height", 600.0, "Height to render")
-	out    = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
-	prof   = flag.Bool("prof", false, "Profile rendering")
+	width     = flag.Float64("width", 800.0, "Width to render")
+	height    = flag.Float64("height", 600.0, "Height to render")
+	out       = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
+	prof      = flag.Bool("prof", false, "Profile rendering")
+	renderOpt = flag.String("render", "", "Way to render the scene")
 )
 
 func main() {
@@ -60,13 +61,25 @@ func Obj(filename string) {
 	if err != nil {
 		panic(err)
 	}
+	for k, val := range model.V {
+		model.V[k] = v.Add(val, v.Vec3{0, 0, -5})
+	}
 	run([]o.Object{model})
+}
+
+func intersector() intersect {
+	switch *renderOpt {
+	case "s", "simple":
+		return simpleIntersect
+	default:
+		return checkIntersects
+	}
 }
 
 func run(o []o.Object) {
 	c := NewStCamera(v.Origin, DefaultCameraDir, 30.0)
 	l := PointLight{v.Vec3{10, 10, 10}, v.Vec3{255, 255, 255}}
-	img := render(*width, *height, c, o, []Light{l})
+	img := render(*width, *height, c, o, []Light{l}, intersector())
 	file, _ := os.OpenFile("./out.png", os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
 	png.Encode(file, &img)

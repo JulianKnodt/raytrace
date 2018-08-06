@@ -1,5 +1,9 @@
 package octree
 
+import (
+	v "raytrace/vector"
+)
+
 type BoundingBox struct {
 	Center    v.Vec3
 	CornerVec v.Vec3

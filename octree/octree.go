@@ -32,8 +32,9 @@ func NewOctree() *Octree {
 		Parent:   nil,
 		Children: [8]*Octree{},
 	}
+	return res
 }
 
 func (o *Octree) Insert(item interface{}) {
-	o.insertionQueue = append(o.insertionQueue, i)
+	o.insertionQueue = append(o.insertionQueue, item)
 }
