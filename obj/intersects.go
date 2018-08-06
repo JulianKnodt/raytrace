@@ -14,7 +14,8 @@ func (o Obj) FaceN(n int) []v.Vec3 {
 	for _, p := range face {
 		switch len(p) {
 		case 1:
-			out = append(out, o.V[p[0]])
+			single := o.V[p[0]]
+			out = append(out, v.Vec3{single[0], single[1], single[2]})
 		case 2:
 			// TODO
 		case 3:

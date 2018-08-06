@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io"
 	"strings"
-
-	v "raytrace/vector"
 )
 
 // Direct OBJ representation
 type Obj struct {
 	// Geometric Vertices
-	V map[int]v.Vec3
+	V  [][4]float64
+	Vt [][3]float64
+	Vn [][3]float64
 	// Polygonal Face Element
 	F [][][]int
 	// Line Element
@@ -22,8 +22,10 @@ type Obj struct {
 func Decode(r io.Reader) (*Obj, error) {
 	scanner := bufio.NewScanner(r)
 	o := &Obj{
-		V: make(map[int]v.Vec3),
-		F: [][][]int{},
+		V:  make([][4]float64, 1),
+		Vt: make([][3]float64, 1),
+		Vn: make([][3]float64, 1),
+		F:  [][][]int{},
 	}
 	for scanner.Scan() {
 		if err := o.add(scanner.Text()); err != nil {
@@ -33,17 +35,41 @@ func Decode(r io.Reader) (*Obj, error) {
 	return o, nil
 }
 
-func (o *Obj) add(s string) error {
+func (o *Obj) add(s string) (err error) {
 	parts := strings.SplitN(s, " ", 2)
 	switch parts[0] {
 	case "", "#":
 	case "v":
 		var x, y, z float64
-		_, err := fmt.Sscanf(parts[1], "%f %f %f", &x, &y, &z)
-		if err != nil {
-			return err
+		w := 1.0 // w is optional and defaults to 0, it is the weight of a vertex
+		switch strings.Count(parts[1], " ") {
+		case 3:
+			_, err = fmt.Sscanf(parts[1], "%f %f %f", &x, &y, &z)
+		case 4:
+			_, err = fmt.Sscanf(parts[1], "%f %f %f %f", &x, &y, &z, &w)
+		default: // TODO this should be an error
 		}
-		o.V[len(o.V)+1] = v.Vec3{x, y, z}
+		if err != nil {
+			return
+		}
+
+		o.V = append(o.V, [4]float64{x, y, z, w})
+	case "vt":
+		var u, vv, w float64
+		_, err = fmt.Sscanf(parts[1], "%f %f %f", &u, &vv, &w)
+		if err != nil {
+			return
+		}
+		o.Vt = append(o.Vt, [3]float64{u, vv, w})
+	case "vn":
+		// specifies a normal vector
+		var i, j, k float64
+		_, err = fmt.Sscanf(parts[1], "%f %f %f", &i, &j, &k)
+		if err != nil {
+			return
+		}
+		o.Vn = append(o.Vn, [3]float64{i, j, k})
+		// Faces
 	case "f":
 		face := [][]int{}
 		for _, coords := range strings.Fields(parts[1]) {
@@ -64,9 +90,13 @@ func (o *Obj) add(s string) error {
 				face = append(face, []int{a, b})
 			case 2:
 				var a, b, c int
-				_, err := fmt.Sscanf(coords, "%d/%d/%d", &a, &b, &c)
+				if s := strings.Split(coords, "/"); len(s[1]) == 0 {
+					_, err = fmt.Sscanf(coords, "%d//%d", &a, &c)
+				} else {
+					_, err = fmt.Sscanf(coords, "%d/%d/%d", &a, &b, &c)
+				}
 				if err != nil {
-					return err
+					return
 				}
 				face = append(face, []int{a, b, c})
 			}
@@ -77,5 +107,6 @@ func (o *Obj) add(s string) error {
 }
 
 func Encode(w io.Writer, o Obj) error {
+	// TODO
 	return nil
 }
