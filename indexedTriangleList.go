@@ -1,10 +1,11 @@
 package main
 
 import (
-	obj "github.com/julianknodt/raytrace/object"
-	"github.com/julianknodt/raytrace/shapes"
-	v "github.com/julianknodt/raytrace/vector"
 	"math"
+	m "raytrace/material"
+	obj "raytrace/object"
+	"raytrace/shapes"
+	v "raytrace/vector"
 )
 
 type IndexedTriangleList struct {
@@ -18,7 +19,7 @@ func (t IndexedTriangleList) GetTriangle(nth int) *shapes.Triangle {
 		t.vertices[t.order[3*nth]],
 		t.vertices[t.order[3*nth+1]],
 		t.vertices[t.order[3*nth+2]],
-		t.color)
+		m.Placeholder{})
 }
 
 func (t IndexedTriangleList) Size() int {

@@ -61,9 +61,7 @@ func Obj(filename string) {
 	if err != nil {
 		panic(err)
 	}
-	for k, val := range model.V {
-		model.V[k] = v.Add(val, v.Vec3{0, 0, -5})
-	}
+	model.Shift(0, 0, -20, 0)
 	run([]o.Object{model})
 }
 

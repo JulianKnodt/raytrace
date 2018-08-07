@@ -134,12 +134,13 @@ func render(
 	close(work)
 
 	timer := time.NewTimer(5 * time.Second)
+	start := time.Now()
 	for count < int64(height*width) {
 		select {
 		case o := <-out:
 			img.Set(o.x, o.y, o.color)
 		case <-timer.C:
-			fmt.Printf("%.3f : %d/%d\n", float64(count)/(height*width), count, int(height*width))
+			fmt.Printf("Time elapsed %s | Percent Done %.3f%% | Pixels Complete %d/%d\n", time.Since(start).Round(time.Second), float64(count)/(height*width)*100, count, int(height*width))
 			timer.Reset(5 * time.Second)
 		}
 	}

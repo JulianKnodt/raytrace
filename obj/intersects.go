@@ -19,7 +19,10 @@ func (o Obj) FaceN(n int) []v.Vec3 {
 		case 2:
 			// TODO
 		case 3:
+			single := o.V[p[0]]
+			out = append(out, v.Vec3{single[0], single[1], single[2]})
 			// TODO
+			// more with texture here
 		}
 	}
 	return out

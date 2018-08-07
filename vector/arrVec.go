@@ -85,6 +85,9 @@ func IntersectsTriangle(a, b, c, origin, dir Vec3) (float64, bool) {
 }
 
 func Intersects(v []Vec3, origin, dir Vec3) (float64, bool) {
+	if len(v) < 3 {
+		return -1, false
+	}
 	for i, vec := range v[:len(v)-2] {
 		if t, intersects := IntersectsTriangle(vec, v[i+1], v[i+2], origin, dir); intersects {
 			return t, true

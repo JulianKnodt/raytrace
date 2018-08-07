@@ -42,12 +42,13 @@ func (o *Obj) add(s string) (err error) {
 	case "v":
 		var x, y, z float64
 		w := 1.0 // w is optional and defaults to 0, it is the weight of a vertex
-		switch strings.Count(parts[1], " ") {
+		switch len(strings.Fields(parts[1])) {
 		case 3:
 			_, err = fmt.Sscanf(parts[1], "%f %f %f", &x, &y, &z)
 		case 4:
 			_, err = fmt.Sscanf(parts[1], "%f %f %f %f", &x, &y, &z, &w)
 		default: // TODO this should be an error
+			err = fmt.Errorf("Cannot handle %s in obj file", parts[1])
 		}
 		if err != nil {
 			return
