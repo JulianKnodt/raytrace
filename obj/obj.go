@@ -37,17 +37,25 @@ func Decode(r io.Reader) (*Obj, error) {
 
 func (o *Obj) add(s string) (err error) {
 	parts := strings.SplitN(s, " ", 2)
+	if len(parts) == 2 {
+		parts[1] = strings.TrimSpace(parts[1])
+	}
 	switch parts[0] {
 	case "", "#":
 	case "v":
 		var x, y, z float64
 		w := 1.0 // w is optional and defaults to 0, it is the weight of a vertex
-		switch len(strings.Fields(parts[1])) {
+		switch s := strings.Fields(parts[1]); len(s) {
 		case 3:
-			_, err = fmt.Sscanf(parts[1], "%f %f %f", &x, &y, &z)
+			_, err = fmt.Sscanf(s[0], "%f", &x)
+			_, err = fmt.Sscanf(s[1], "%f", &y)
+			_, err = fmt.Sscanf(s[2], "%f", &z)
 		case 4:
-			_, err = fmt.Sscanf(parts[1], "%f %f %f %f", &x, &y, &z, &w)
-		default: // TODO this should be an error
+			_, err = fmt.Sscanf(s[0], "%f", &x)
+			_, err = fmt.Sscanf(s[1], "%f", &y)
+			_, err = fmt.Sscanf(s[2], "%f", &z)
+			_, err = fmt.Sscanf(s[3], "%f", &w)
+		default:
 			err = fmt.Errorf("Cannot handle %s in obj file", parts[1])
 		}
 		if err != nil {
