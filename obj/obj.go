@@ -20,6 +20,13 @@ type Obj struct {
 	L [][]int
 }
 
+type State struct {
+	G      string
+	O      string
+	UseMTL string
+	// MTLLib string // this loads materials from file into memory
+}
+
 func Decode(r io.Reader) (*Obj, error) {
 	scanner := bufio.NewScanner(r)
 	o := &Obj{
