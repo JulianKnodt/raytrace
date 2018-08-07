@@ -13,6 +13,7 @@ type Obj struct {
 	V  [][4]float64
 	Vt [][3]float64
 	Vn [][3]float64
+	Vp [][3]float64
 	// Polygonal Face Element
 	F [][][]int
 	// Line Element
@@ -42,6 +43,14 @@ func (o *Obj) add(s string) (err error) {
 	}
 	switch parts[0] {
 	case "", "#":
+	case "g":
+		// TODO group name
+	case "o":
+		// TODO object name
+	case "usemtl":
+		// TODO something
+	case "mtllib":
+		// TODO something
 	case "v":
 		var x, y, z float64
 		w := 1.0 // w is optional and defaults to 0, it is the weight of a vertex
@@ -78,6 +87,20 @@ func (o *Obj) add(s string) (err error) {
 			return
 		}
 		o.Vn = append(o.Vn, [3]float64{i, j, k})
+	case "vp":
+		var u, vv, w float64
+		switch len(strings.Fields(parts[1])) {
+		case 2:
+			_, err = fmt.Sscanf(parts[1], "%f %f", &u, &vv)
+		case 3:
+			_, err = fmt.Sscanf(parts[1], "%f %f %f", &u, &vv, &w)
+		default:
+			err = fmt.Errorf("vp cannot handle %s", s)
+		}
+		if err != nil {
+			return
+		}
+		o.Vp = append(o.Vp, [3]float64{u, vv, w})
 		// Faces
 	case "f":
 		face := [][]int{}
