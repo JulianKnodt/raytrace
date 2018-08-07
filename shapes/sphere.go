@@ -25,7 +25,7 @@ func (s Sphere) Mat() m.Material {
 	return s.Material
 }
 
-func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.Shape) {
+func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.SurfaceElement) {
 	center := v.Sub(s.center, origin)
 	toNormal := v.Dot(center, dir)
 	if toNormal < 0 {
@@ -47,7 +47,7 @@ func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.Shape) {
 	}
 }
 
-func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.Shape) {
+func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.SurfaceElement) {
 	centerDiff := v.Sub(origin, s.center)
 	a := v.SqrMagn(dir)
 	b := 2 * v.Dot(dir, centerDiff)

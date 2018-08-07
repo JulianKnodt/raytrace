@@ -13,7 +13,7 @@ type Triangle struct {
 	m.Material
 }
 
-func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, obj.Shape) {
+func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, obj.SurfaceElement) {
 	if param, intersects := vec.IntersectsTriangle(t.a, t.b, t.c, origin, dir); intersects {
 		return param, t
 	}

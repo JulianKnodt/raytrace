@@ -18,7 +18,7 @@ type intersect func(v.Vec3, v.Vec3, []obj.Object, []Light) color.Color
 
 func simpleIntersect(origin, dir v.Vec3, objects []obj.Object, lights []Light) color.Color {
 	maxDist := math.Inf(1)
-	var near obj.Shape
+	var near obj.SurfaceElement
 	for _, o := range objects {
 		if dist, intersecting := o.Intersects(origin, dir); intersecting != nil {
 			if dist < maxDist && dist > 0 {
@@ -36,7 +36,7 @@ func simpleIntersect(origin, dir v.Vec3, objects []obj.Object, lights []Light) c
 
 func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) color.Color {
 	maxDist := math.Inf(1)
-	var near obj.Shape
+	var near obj.SurfaceElement
 	for _, o := range objects {
 		if dist, intersecting := o.Intersects(from, dir); intersecting != nil {
 			if dist < maxDist && dist > 0 {
@@ -78,7 +78,7 @@ func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) col
 			}
 		}
 		if canIllum {
-			v.AddSet(&color, v.SMul(align, near.Mat().Color()))
+			v.AddSet(&color, v.SMul(align, near.Mat().Emitted()))
 		}
 	}
 	return v.ToRGBA(color)

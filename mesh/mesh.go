@@ -39,9 +39,9 @@ func (m Mesh) Edges() (count uint64) {
 	return
 }
 
-func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
 	min := math.Inf(1)
-	var shape obj.Shape
+	var shape obj.SurfaceElement
 	for i := uint64(0); i < m.Faces(); i++ {
 		face := m.FaceN(i)
 		if t, intersects := v.Intersects(face, origin, dir); intersects && t < min {

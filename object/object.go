@@ -15,10 +15,10 @@ import (
  Color: an object should have a color
 */
 type Object interface {
-	Intersects(origin, dir v.Vec3) (float64, Shape)
+	Intersects(origin, dir v.Vec3) (float64, SurfaceElement)
 }
 
-type Shape interface {
+type SurfaceElement interface {
 	Normal(to v.Vec3) (dir v.Vec3, invAble bool)
 	// invable relates to whether or not the normal can be flipped or not
 	// any 2d shape should be invertible

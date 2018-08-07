@@ -28,9 +28,9 @@ func (o Obj) FaceN(n int) []v.Vec3 {
 	return out
 }
 
-func (o Obj) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+func (o Obj) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
 	min := math.Inf(1)
-	var shape obj.Shape
+	var shape obj.SurfaceElement
 	for i := 0; i < len(o.F); i++ {
 		face := o.FaceN(i)
 		if t, intersects := v.Intersects(face, origin, dir); intersects && t < min {

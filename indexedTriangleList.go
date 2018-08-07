@@ -39,7 +39,7 @@ func (t IndexedTriangleList) Color() v.Vec3 {
 	return t.color
 }
 
-func (t IndexedTriangleList) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+func (t IndexedTriangleList) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
 	var pMax float64 = math.MaxFloat64
 	var surface shapes.Triangle
 	size := t.Size()

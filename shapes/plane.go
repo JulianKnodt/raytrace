@@ -17,7 +17,7 @@ func NewPlane(p, norm v.Vec3, mat m.Material) *Plane {
 	return &Plane{p, v.Unit(norm), mat}
 }
 
-func (p Plane) Intersects(origin, dir v.Vec3) (float64, obj.Shape) {
+func (p Plane) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
 	denom := v.Dot(dir, p.norm)
 	if denom == 0 {
 		return -1, nil
