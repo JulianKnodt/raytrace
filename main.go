@@ -19,13 +19,15 @@ var (
 	out       = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
 	prof      = flag.Bool("prof", false, "Profile rendering")
 	renderOpt = flag.String("render", "", "Way to render the scene")
+	shift     = flag.String("shift", "0 0 0", "Shift Amount for obj files, format: \"f f f\"")
+	x, y, z   float64
 )
 
 func main() {
 	off := flag.String("off", "", "Off file to render")
 	obj := flag.String("obj", "", "Obj file to render")
-
 	flag.Parse()
+	fmt.Sscanf(*shift, "%f %f %f", &x, &y, &z)
 
 	if len(*off) != 0 {
 		Off(*off)
@@ -54,8 +56,7 @@ func Off(filename string) {
 		panic(err)
 	}
 
-	model.Vertices = v.Shift(model.Vertices, 0, 0, -20)
-	fmt.Println(model)
+	model.Vertices = v.Shift(model.Vertices, x, y, z)
 	run([]o.Object{model})
 }
 
@@ -69,7 +70,7 @@ func Obj(filename string) {
 	if err != nil {
 		panic(err)
 	}
-	model.Shift(0, 0, -20, 0)
+	model.Shift(x, y, z, 0)
 	run([]o.Object{model})
 }
 

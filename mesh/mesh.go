@@ -10,7 +10,6 @@ import (
 
 type Mesh struct {
 	numVertices uint64
-	numFaces    uint64
 	Vertices    []v.Vec3
 	Order       [][]int
 }
@@ -29,7 +28,7 @@ func (m Mesh) Verts() uint64 {
 }
 
 func (m Mesh) Faces() uint64 {
-	return m.numFaces
+	return uint64(len(m.Order))
 }
 
 func (m Mesh) Edges() (count uint64) {

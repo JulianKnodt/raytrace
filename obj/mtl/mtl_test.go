@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -13,6 +14,9 @@ func TestDecode(t *testing.T) {
 		t.Error(err)
 	}
 	for _, f := range files {
+		if !strings.HasSuffix(f.Name(), ".mtl") {
+			continue
+		}
 		file, err := os.Open(fmt.Sprintf("./testdata/%s", f.Name()))
 		if err != nil {
 			t.Error(err)

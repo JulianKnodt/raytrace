@@ -61,13 +61,13 @@ func Decode(r io.Reader) (*mesh.Mesh, error) {
 			return nil, err
 		}
 		order := make([]int, numVert)
-		for _, v := range parts[1:] {
+		for i, v := range parts[1:] {
 			if len(v) > 0 {
 				n, err := strconv.Atoi(v)
 				if err != nil {
 					return nil, err
 				}
-				order = append(order, n)
+				order[i] = n
 			}
 		}
 		result.Order = append(result.Order, order)

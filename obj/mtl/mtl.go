@@ -53,17 +53,39 @@ const (
 	Cast_Shadow // wtf is this
 )
 
+type Map_Kd struct {
+	FileName string
+	Options  []string
+	Args     []string
+}
+
 // Representation of MTL file
 type MTL struct {
-	Ka [3]float64 // ambient reflectance // should be converted to its own type
-	Kd [3]float64 // diffuse reflectance
-	Ks [3]float64 // Specular reflectance
-	D  float64    // Diffusion?
-	Tf float64    // TODO transmission filter
+	// ambient reflectance // should be converted to its own type
+	Ka [3]float64
+	// diffuse reflectance
+	Kd [3]float64
+	// Specular reflectance
+	Ks [3]float64
+	Ke [3]float64
+	// Diffusion?
+	D float64
+	// TODO transmission filter
+	Tf float64
+	// TODO label // is this even in the spec???
+	Tr [3]float64
+	// TODO label
+	Ns float64
+	// TODO label
+	Ni float64
 	// Illumination mode of the MTL
 	Illum Mode
 	// name of the material
 	Name string
+
+	// Mappings
+
+	Map_Kd Map_Kd
 }
 
 func Decode(r io.Reader) (out map[string]MTL, err error) {
@@ -71,7 +93,7 @@ func Decode(r io.Reader) (out map[string]MTL, err error) {
 	scanner := bufio.NewScanner(r)
 	var curr *MTL
 	for scanner.Scan() {
-		err, hasNew, newMTL := curr.addMTL(scanner.Text())
+		err, hasNew, newMTL := curr.addMTL(strings.TrimSpace(scanner.Text()))
 		if err != nil {
 			return out, err
 		} else if hasNew {
@@ -90,6 +112,7 @@ func Decode(r io.Reader) (out map[string]MTL, err error) {
 
 func (m *MTL) addMTL(s string) (err error, hasNewMTL bool, newMTL *MTL) {
 	switch parts := strings.SplitN(s, " ", 2); parts[0] {
+	case "#", "": // Empty response
 	case "newmtl":
 		hasNewMTL = true
 		newMTL = &MTL{
@@ -104,6 +127,10 @@ func (m *MTL) addMTL(s string) (err error, hasNewMTL bool, newMTL *MTL) {
 		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
 		m.Kd = [3]float64{x, y, z}
 	case "Ks", "ks":
+	case "Ke", "ke":
+		var x, y, z float64
+		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
+		m.Ke = [3]float64{x, y, z}
 	case "Tf", "tf":
 	case "illum": // illumination
 		var illum Mode
@@ -114,9 +141,33 @@ func (m *MTL) addMTL(s string) (err error, hasNewMTL bool, newMTL *MTL) {
 		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &dissolve)
 		m.D = dissolve
 	case "Ns", "ns":
+		var ns float64
+		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ns)
+		m.Ns = ns
 	case "sharpness":
 	case "Ni", "ni":
+		var ni float64
+		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ni)
+		m.Ni = ni
 	case "Material", "material":
+	case "Tr", "tr":
+		// TODO
+
+	// Mapping
+
+	case "map_Kd":
+		// TODO
+		fields := strings.Fields(parts[1])
+		switch len(fields) {
+		case 1:
+			// Just got the filename
+			m.Map_Kd = Map_Kd{
+				FileName: fields[0],
+			}
+		default:
+			// TODO Holy all the todos
+		}
+
 	default:
 		fmt.Println("Unmatched", s)
 	}
