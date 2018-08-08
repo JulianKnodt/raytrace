@@ -1,7 +1,7 @@
 package octree
 
 import (
-//	v "raytrace/vector" // only works on one of my machines lol
+	"math"
 )
 
 type Octree struct {
@@ -9,10 +9,12 @@ type Octree struct {
 
 	Parent   *Octree
 	Children [8]*Octree
-	Bounds   [2][3]float64
+	bounds   NaiveBoundingBox
+	Values   []OctreeItem
+}
 
-	insertionQueue []interface{} // should this be an interface
-	items          []interface{}
+type OctreeItem interface {
+	BoundingBox() NaiveBoundingBox
 }
 
 const MIN_SIZE = 1
@@ -28,13 +30,23 @@ const (
 )
 
 func NewOctree() *Octree {
-	res := &Octree{
+	return &Octree{
 		Parent:   nil,
 		Children: [8]*Octree{},
+		bounds: NaiveBoundingBox{
+			math.Inf(-1), math.Inf(1),
+			math.Inf(-1), math.Inf(1),
+			math.Inf(-1), math.Inf(1),
+		},
 	}
-	return res
 }
 
-func (o *Octree) Insert(item interface{}) {
-	o.insertionQueue = append(o.insertionQueue, item)
+func (o *Octree) Insert(item ...OctreeItem) {
+	o.Values = append(o.Values, item...)
+}
+
+func (o *Octree) Flatten() {
+	for _, v := range o.Values {
+
+	}
 }
