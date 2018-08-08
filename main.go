@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"image/png"
 	"os"
 	m "raytrace/material"
@@ -48,7 +49,14 @@ func Off(filename string) {
 		panic(err)
 	}
 
-	off.Decode(f)
+	model, err := off.Decode(f)
+	if err != nil {
+		panic(err)
+	}
+
+	model.Vertices = v.Shift(model.Vertices, 0, 0, -20)
+	fmt.Println(model)
+	run([]o.Object{model})
 }
 
 func Obj(filename string) {

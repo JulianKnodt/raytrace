@@ -17,7 +17,7 @@ func Normal(v []Vec3) (Vec3, bool) {
 
 func Shift(v []Vec3, x, y, z float64) []Vec3 {
 	shiftVec := Vec3{x, y, z}
-	result := make([]Vec3, 0, len(v))
+	result := make([]Vec3, len(v))
 	for i, vec := range v {
 		result[i] = Add(vec, shiftVec)
 	}

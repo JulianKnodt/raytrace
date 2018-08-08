@@ -6,7 +6,7 @@ import (
 )
 
 func TestDecode(t *testing.T) {
-	f, err := os.Open("./dragon.off")
+	f, err := os.Open("./testdata/dragon.off")
 	if err != nil {
 		panic(err)
 	}
