@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"raytrace/camera"
 	obj "raytrace/object"
 	v "raytrace/vector"
 	"runtime"
@@ -100,7 +101,7 @@ type fieldColor struct {
 // algorithm choice
 func render(
 	width, height float64,
-	cam Camera,
+	cam camera.Camera,
 	o []obj.Object,
 	l []Light,
 	inter intersect,

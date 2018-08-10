@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"raytrace/obj/mtl"
 	"strings"
 )
 
@@ -15,35 +16,54 @@ type Obj struct {
 	Vn [][3]float64
 	Vp [][3]float64
 	// Polygonal Face Element
-	F [][][]int
+	F []Face
 	// Line Element
 	L [][]int
 }
 
-type State struct {
-	G      string
-	O      string
-	UseMTL string
-	// MTLLib string // this loads materials from file into memory
+type FaceElement struct {
+	V  int
+	Vt int
+	Vn int
 }
 
-func Decode(r io.Reader) (*Obj, error) {
+type Face struct {
+	Elements []FaceElement
+}
+
+type State struct {
+	G         string
+	O         string
+	UseMTL    string
+	MTLLib    map[string]mtl.MTL
+	MTLLoader MTLLoader
+}
+
+type MTLLoader func(string) (map[string]mtl.MTL, error)
+
+func Decode(r io.Reader, mtlLoader MTLLoader) (*Obj, error) {
 	scanner := bufio.NewScanner(r)
 	o := &Obj{
-		V:  make([][4]float64, 1),
-		Vt: make([][3]float64, 1),
-		Vn: make([][3]float64, 1),
-		F:  [][][]int{},
+		V:  make([][4]float64, 0),
+		Vt: make([][3]float64, 0),
+		Vn: make([][3]float64, 0),
+		F:  make([]Face, 0),
 	}
+
+	state := &State{
+		MTLLib:    make(map[string]mtl.MTL),
+		MTLLoader: mtlLoader,
+	}
+
 	for scanner.Scan() {
-		if err := o.add(scanner.Text()); err != nil {
+		if err := o.add(scanner.Text(), state); err != nil {
 			return o, err
 		}
 	}
 	return o, nil
 }
 
-func (o *Obj) add(s string) (err error) {
+func (o *Obj) add(s string, state *State) (err error) {
 	parts := strings.SplitN(s, " ", 2)
 	if len(parts) == 2 {
 		parts[1] = strings.TrimSpace(parts[1])
@@ -51,13 +71,22 @@ func (o *Obj) add(s string) (err error) {
 	switch parts[0] {
 	case "", "#":
 	case "g":
-		// TODO group name
+		state.G = strings.TrimSpace(parts[1])
 	case "o":
-		// TODO object name
 	case "usemtl":
-		// TODO something
+		state.UseMTL = strings.TrimSpace(parts[1])
 	case "mtllib":
-		// TODO something
+		if state.MTLLoader == nil {
+			// skipping loading mtl files
+			return nil
+		}
+		mtl, err := state.MTLLoader(strings.TrimSpace(parts[1]))
+		if err != nil {
+			return err
+		}
+		for s, m := range mtl {
+			state.MTLLib[s] = m
+		}
 	case "v":
 		var x, y, z float64
 		w := 1.0 // w is optional and defaults to 0, it is the weight of a vertex
@@ -110,7 +139,8 @@ func (o *Obj) add(s string) (err error) {
 		o.Vp = append(o.Vp, [3]float64{u, vv, w})
 		// Faces
 	case "f":
-		face := [][]int{}
+		face := Face{}
+		faceElements := make([]FaceElement, 0)
 		for _, coords := range strings.Fields(parts[1]) {
 			switch strings.Count(coords, "/") {
 			case 0:
@@ -119,14 +149,14 @@ func (o *Obj) add(s string) (err error) {
 				if err != nil {
 					return err
 				}
-				face = append(face, []int{vertNumber})
+				faceElements = append(faceElements, FaceElement{vertNumber, -1, -1})
 			case 1:
 				var a, b int
 				_, err := fmt.Sscanf(coords, "%d/%d", &a, &b)
 				if err != nil {
 					return err
 				}
-				face = append(face, []int{a, b})
+				faceElements = append(faceElements, FaceElement{a, b, -1})
 			case 2:
 				var a, b, c int
 				if s := strings.Split(coords, "/"); len(s[1]) == 0 {
@@ -137,15 +167,16 @@ func (o *Obj) add(s string) (err error) {
 				if err != nil {
 					return
 				}
-				face = append(face, []int{a, b, c})
+				faceElements = append(faceElements, FaceElement{a, b, c})
 			}
 		}
+		face.Elements = faceElements
 		o.F = append(o.F, face)
 	}
 	return nil
 }
 
-func Encode(w io.Writer, o Obj) error {
+func Encode(w io.Writer, o Obj) (err error) {
 	// TODO
-	return nil
+	return
 }

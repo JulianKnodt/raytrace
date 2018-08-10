@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"image/png"
 	"os"
+	"path/filepath"
+	"raytrace/camera"
 	m "raytrace/material"
 	"raytrace/obj"
+	"raytrace/obj/mtl"
 	o "raytrace/object"
 	"raytrace/off"
 	"raytrace/shapes"
@@ -50,6 +53,7 @@ func Off(filename string) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 
 	model, err := off.Decode(f)
 	if err != nil {
@@ -65,8 +69,17 @@ func Obj(filename string) {
 	if err != nil {
 		panic(err)
 	}
+	defer f.Close()
 
-	model, err := obj.Decode(f)
+	model, err := obj.Decode(f, func(mtlName string) (map[string]mtl.MTL, error) {
+		mtlFile, err := os.Open(filepath.Dir(filename) + mtlName)
+		if err != nil {
+			return nil, err
+		}
+		defer mtlFile.Close()
+
+		return mtl.Decode(mtlFile)
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -84,7 +97,7 @@ func intersector() intersect {
 }
 
 func run(o []o.Object) {
-	c := NewStCamera(v.Origin, DefaultCameraDir, 30.0)
+	c := camera.NewStCamera(v.Origin, camera.DefaultCameraDir, 30.0)
 	l := PointLight{v.Vec3{10, 10, 10}, v.Vec3{255, 255, 255}}
 	img := render(*width, *height, c, o, []Light{l}, intersector())
 	file, _ := os.OpenFile("./out.png", os.O_WRONLY|os.O_CREATE, 0600)
