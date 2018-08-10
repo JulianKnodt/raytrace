@@ -44,3 +44,16 @@ func TestNaiveBoxNotIntersects(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestNaiveBoxContains(t *testing.T) {
+	s1 := NaiveBoundingBox{
+		0, 4, 0, 4, 0, 4,
+	}
+	s2 := NaiveBoundingBox{
+		1, 3, 1, 3, 1, 3,
+	}
+
+	if !s1.Contains(s2) {
+		t.Fail()
+	}
+}

@@ -44,6 +44,12 @@ func (n NaiveBoundingBox) Intersects(o NaiveBoundingBox) bool {
 		n.ZZ > o.Zz && o.ZZ > n.Zz
 }
 
+func (n NaiveBoundingBox) Contains(o NaiveBoundingBox) bool {
+	return n.XX > o.XX && n.Xx < o.Xx &&
+		n.YY > o.YY && n.Yy < o.Yy &&
+		n.ZZ > o.ZZ && n.Zz < o.Zz
+}
+
 func (n NaiveBoundingBox) Center() [3]float64 {
 	return [3]float64{
 		(n.XX - n.Xx) / 2,
