@@ -1,0 +1,4 @@
+- [ ] Add obj textures
+- [ ] Finish Octree
+- [ ] Create KDtree module
+- [ ] Create Spherical Tree module
