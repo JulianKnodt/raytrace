@@ -17,12 +17,8 @@ func NewSphere(center v.Vec3, radius float64, mat m.Material) *Sphere {
 	return &Sphere{center, radius * radius, mat}
 }
 
-func (s Sphere) Normal(p v.Vec3) (v.Vec3, bool) {
-	return v.Sub(p, s.center), false
-}
-
-func (s Sphere) Mat() m.Material {
-	return s.Material
+func (s Sphere) normal(p v.Vec3) v.Vec3 {
+	return v.Sub(p, s.center)
 }
 
 func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.SurfaceElement) {
@@ -41,9 +37,15 @@ func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.SurfaceElem
 	t1 := toNormal + interDist
 
 	if t0 < 0 {
-		return t1, s
+		return t1, obj.Surfel{
+			Norm:     s.normal(v.Add(origin, v.SMul(t1, dir))),
+			Material: s.Material,
+		}
 	} else {
-		return t0, s
+		return t0, obj.Surfel{
+			Norm:     s.normal(v.Add(origin, v.SMul(t0, dir))),
+			Material: s.Material,
+		}
 	}
 }
 
@@ -63,7 +65,6 @@ func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.SurfaceEle
 
 	t0 := (-b + math.Sqrt(discrim)) / (2 * a)
 	t1 := (-b - math.Sqrt(discrim)) / (2 * a)
-	shape = s
 	switch {
 	case t0 < 0 && t1 < 0:
 		return t, nil
@@ -74,6 +75,10 @@ func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.SurfaceEle
 	default:
 		// return closest point
 		t = math.Min(t0, t1)
+	}
+	shape = obj.Surfel{
+		Norm:     s.normal(v.Add(origin, v.SMul(t, dir))),
+		Material: s.Material,
 	}
 	return
 }

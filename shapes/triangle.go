@@ -24,7 +24,7 @@ func (t Triangle) Mat() m.Material {
 	return t.Material
 }
 
-func (t Triangle) Normal(_to vec.Vec3) (vec.Vec3, bool) {
+func (t Triangle) Normal() (vec.Vec3, bool) {
 	return vec.Unit(vec.Cross(vec.Sub(t.a, t.b), vec.Sub(t.c, t.a))), true
 }
 

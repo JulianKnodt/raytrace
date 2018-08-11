@@ -44,9 +44,9 @@ type MTLLoader func(string) (map[string]mtl.MTL, error)
 func Decode(r io.Reader, mtlLoader MTLLoader) (*Obj, error) {
 	scanner := bufio.NewScanner(r)
 	o := &Obj{
-		V:  make([][4]float64, 0),
-		Vt: make([][3]float64, 0),
-		Vn: make([][3]float64, 0),
+		V:  make([][4]float64, 1), // These are empty because they're 1 indexed
+		Vt: make([][3]float64, 1),
+		Vn: make([][3]float64, 1),
 		F:  make([]Face, 0),
 	}
 

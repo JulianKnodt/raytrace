@@ -11,7 +11,7 @@ import (
 
  Normal: an object should be able to determine a normal on its surface
 
- Color: an object should have a color
+ Material: an object should have a material for rendering
 */
 type Object interface {
 	// Surface Element maybe shouldn't be an interface, because the normal is constant...

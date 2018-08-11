@@ -7,7 +7,8 @@ import (
 
 type SurfaceElement interface {
 	// 2d shapes can be invertible? It really depends
-	Normal(to v.Vec3) (dir v.Vec3, invertible bool)
+	// This normal is constant based on wherever it originally intersected
+	Normal() (dir v.Vec3, invertible bool)
 
 	Mat() m.Material
 }
@@ -22,5 +23,18 @@ func (s Surfel) Normal() (v.Vec3, bool) {
 }
 
 func (s Surfel) Mat() m.Material {
+	return s.Material
+}
+
+type InvertibleSurfel struct {
+	Norm     v.Vec3
+	Material m.Material
+}
+
+func (s InvertibleSurfel) Normal() (v.Vec3, bool) {
+	return s.Norm, true
+}
+
+func (s InvertibleSurfel) Mat() m.Material {
 	return s.Material
 }

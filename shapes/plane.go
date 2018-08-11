@@ -29,7 +29,7 @@ func (p Plane) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
 	return param, p
 }
 
-func (p Plane) Normal(_to v.Vec3) (v.Vec3, bool) {
+func (p Plane) Normal() (v.Vec3, bool) {
 	return p.norm, true
 }
 

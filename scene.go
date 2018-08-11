@@ -56,7 +56,7 @@ func checkIntersects(from, dir v.Vec3, objects []obj.Object, lights []Light) col
 	}
 
 	inter := v.Add(from, v.SMul(maxDist, dir))
-	normalInter, invAble := near.Normal(inter)
+	normalInter, invAble := near.Normal()
 	v.UnitSet(&normalInter)
 	v.AddSet(&inter, v.SMul(epsilon, normalInter))
 
