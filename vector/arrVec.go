@@ -84,6 +84,8 @@ func IntersectsTriangle(a, b, c, origin, dir Vec3) (float64, bool) {
 	return par, false
 }
 
+// Returns whether or not a ray starting at origin with direction dir intersects the face defined
+// by the set of points v
 func Intersects(v []Vec3, origin, dir Vec3) (float64, bool) {
 	if len(v) < 3 {
 		return -1, false
@@ -104,6 +106,8 @@ func Interpolate(points [3]Vec3, barycentric Vec3) Vec3 {
 	return result
 }
 
+// A second variation of a function that checks whether origin dir intersects a triangle
+//
 func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool, Vec3) {
 	edge1 := Sub(b, a)
 	edge2 := Sub(c, a)
