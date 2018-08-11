@@ -1,4 +1,5 @@
-package main
+// Lights for raytracing
+package light
 
 import (
 	v "raytrace/vector"
@@ -19,14 +20,14 @@ type Light interface {
 
 // light which emits light in all directions
 type PointLight struct {
-	center v.Vec3
-	color  v.Vec3
+	Center       v.Vec3
+	RadiantColor v.Vec3
 }
 
 func (p PointLight) Color() v.Vec3 {
-	return p.color
+	return p.RadiantColor
 }
 
 func (p PointLight) LightTo(point v.Vec3) (dir v.Vec3, canIllum bool) {
-	return v.Unit(v.Sub(p.center, point)), true
+	return v.Unit(v.Sub(p.Center, point)), true
 }
