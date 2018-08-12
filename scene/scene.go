@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 
 	"raytrace/camera"
+	"raytrace/lib/sky"
 	"raytrace/light"
 	"raytrace/obj"
 	"raytrace/obj/mtl"
 	"raytrace/object"
 	"raytrace/off"
-	"raytrace/sky"
 	v "raytrace/vector"
 )
 
