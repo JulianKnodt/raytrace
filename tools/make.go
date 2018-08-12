@@ -23,11 +23,5 @@ func main() {
 		defer output.Close()
 	}
 
-	switch flag.Arg(0) {
-	case "cube":
-		Cube(output)
-	case "cylinder":
-	default:
-		fmt.Println("Unknown how to make", flag.Arg(0))
-	}
+	Out(output, 20, 10, 5)
 }
