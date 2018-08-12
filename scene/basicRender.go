@@ -20,7 +20,7 @@ func Basic(origin, dir v.Vec3, s Scene) color.Color {
 	}
 
 	if near == nil {
-		return color.Black
+		return nil
 	}
 	return color.White
 }

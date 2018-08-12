@@ -69,6 +69,9 @@ func (s Scene) Render() image.RGBA {
 	for count < int64(s.Height*s.Width) {
 		select {
 		case o := <-out:
+			if o.color == nil {
+				o.color = s.Sky.At(o.x, o.y)
+			}
 			img.Set(o.x, o.y, o.color)
 		case <-timer.C:
 			fmt.Printf(
@@ -81,8 +84,13 @@ func (s Scene) Render() image.RGBA {
 			timer.Reset(5 * time.Second)
 		}
 	}
+
 	close(out)
+
 	for o := range out {
+		if o.color == nil {
+			o.color = s.Sky.At(o.x, o.y)
+		}
 		img.Set(o.x, o.y, o.color)
 	}
 

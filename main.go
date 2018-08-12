@@ -46,7 +46,9 @@ func main() {
 	scene.AddObj(*obj, v.Vec3{x, y, z})
 	scene.AddOff(*off, v.Vec3{x, y, z})
 	scene.AddSky(*skyFile)
+
 	img := scene.Render()
+
 	file, _ := os.OpenFile(*out, os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
 	png.Encode(file, &img)
