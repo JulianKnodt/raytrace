@@ -1,10 +1,14 @@
 package octree
 
+import (
+	"raytrace/object"
+)
+
 type Octree struct {
 	Parent   *Octree
 	Children [8]*Octree
 	Values   []OctreeItem
-	Region   NaiveBoundingBox
+	Region   AxisAlignedBoundingBox
 }
 
 const MIN_SIZE = 1
@@ -21,7 +25,7 @@ const (
 
 var zero = [3]float64{0, 0, 0}
 
-func NewEmptyOctree(bounds NaiveBoundingBox) *Octree {
+func NewEmptyOctree(bounds AxisAlignedBoundingBox) *Octree {
 	return &Octree{
 		Parent:   nil,
 		Children: [8]*Octree{},
@@ -30,7 +34,7 @@ func NewEmptyOctree(bounds NaiveBoundingBox) *Octree {
 	}
 }
 
-func newChildOctree(parent *Octree, bounds NaiveBoundingBox) *Octree {
+func newChildOctree(parent *Octree, bounds AxisAlignedBoundingBox) *Octree {
 	return &Octree{
 		Parent:   parent,
 		Children: [8]*Octree{},
@@ -40,7 +44,8 @@ func newChildOctree(parent *Octree, bounds NaiveBoundingBox) *Octree {
 }
 
 type OctreeItem interface {
-	Box() NaiveBoundingBox
+	Box() AxisAlignedBoundingBox
+	object.Object
 }
 
 func (o *Octree) Insert(items ...OctreeItem) {
@@ -58,7 +63,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	center := o.Region.Center()
 	cX, cY, cZ := center[0], center[1], center[2]
 	if o.Children[XYZ] == nil {
-		o.Children[XYZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[XYZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			cX, o.Region.XX,
 			cY, o.Region.YY,
 			cZ, o.Region.ZZ,
@@ -66,7 +71,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[XYNZ] == nil {
-		o.Children[XYNZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[XYNZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			cX, o.Region.XX,
 			cY, o.Region.YY,
 			o.Region.Zz, cZ,
@@ -74,7 +79,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[XNYZ] == nil {
-		o.Children[XNYZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[XNYZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			cX, o.Region.XX,
 			o.Region.Yy, cY,
 			cZ, o.Region.ZZ,
@@ -82,7 +87,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[XNYNZ] == nil {
-		o.Children[XNYNZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[XNYNZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			cX, o.Region.XX,
 			o.Region.Yy, cY,
 			o.Region.Zz, cZ,
@@ -90,7 +95,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[NXYZ] == nil {
-		o.Children[NXYZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[NXYZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			o.Region.Xx, cX,
 			cY, o.Region.YY,
 			cZ, o.Region.ZZ,
@@ -98,7 +103,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[NXYNZ] == nil {
-		o.Children[NXYNZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[NXYNZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			o.Region.Xx, cX,
 			cY, o.Region.YY,
 			o.Region.Zz, cZ,
@@ -106,7 +111,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[NXNYZ] == nil {
-		o.Children[NXNYZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[NXNYZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			o.Region.Xx, cX,
 			o.Region.Yy, cY,
 			cZ, o.Region.ZZ,
@@ -114,7 +119,7 @@ func (o *Octree) Flatten(allowedAmt int) {
 	}
 
 	if o.Children[NXNYNZ] == nil {
-		o.Children[NXNYNZ] = newChildOctree(o, NaiveBoundingBox{
+		o.Children[NXNYNZ] = newChildOctree(o, AxisAlignedBoundingBox{
 			o.Region.Xx, cX,
 			o.Region.Yy, cY,
 			o.Region.Zz, cZ,

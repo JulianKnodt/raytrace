@@ -2,6 +2,7 @@ package octree
 
 import (
 	"math"
+	v "raytrace/vector"
 )
 
 type BoundingSphere struct {
@@ -22,8 +23,9 @@ func sqr(a float64) float64 {
 	return a * a
 }
 
-// This is assumed to just be a flat box
-type NaiveBoundingBox struct {
+// A box which is aligned with the axis
+// intended to be used to test whether or not something intersects it
+type AxisAlignedBoundingBox struct {
 	// Min x
 	Xx float64
 	// Max X
@@ -38,22 +40,49 @@ type NaiveBoundingBox struct {
 	ZZ float64
 }
 
-func (n NaiveBoundingBox) Intersects(o NaiveBoundingBox) bool {
+func (n AxisAlignedBoundingBox) Intersects(o AxisAlignedBoundingBox) bool {
 	return n.XX > o.Xx && o.XX > n.Xx &&
 		n.YY > o.Yy && o.YY > n.Yy &&
 		n.ZZ > o.Zz && o.ZZ > n.Zz
 }
 
-func (n NaiveBoundingBox) Contains(o NaiveBoundingBox) bool {
+func (n AxisAlignedBoundingBox) Contains(o AxisAlignedBoundingBox) bool {
 	return n.XX > o.XX && n.Xx < o.Xx &&
 		n.YY > o.YY && n.Yy < o.Yy &&
 		n.ZZ > o.ZZ && n.Zz < o.Zz
 }
 
-func (n NaiveBoundingBox) Center() [3]float64 {
+func (a AxisAlignedBoundingBox) ContainsVec(vec v.Vec3) bool {
+	return a.Xx < vec[0] && a.XX > vec[0] &&
+		a.Yy < vec[1] && a.YY > vec[1] &&
+		a.Zz < vec[2] && a.ZZ > vec[2]
+}
+
+func (n AxisAlignedBoundingBox) Center() [3]float64 {
 	return [3]float64{
 		(n.XX - n.Xx) / 2,
 		(n.YY - n.Yy) / 2,
 		(n.ZZ - n.Zz) / 2,
 	}
+}
+
+func (a AxisAlignedBoundingBox) IntersectsRay(origin, dir v.Vec3) bool {
+	tMin, tMax := math.Inf(-1), math.Inf(1)
+
+	t1 := (a.Xx - origin[0]) / dir[0]
+	t2 := (a.XX - origin[0]) / dir[0]
+	tMin = math.Max(tMin, math.Min(t1, t2))
+	tMax = math.Min(tMax, math.Max(t1, t2))
+
+	t1 = (a.Yy - origin[1]) / dir[1]
+	t2 = (a.YY - origin[1]) / dir[1]
+	tMin = math.Max(tMin, math.Min(t1, t2))
+	tMax = math.Min(tMax, math.Max(t1, t2))
+
+	t1 = (a.Zz - origin[2]) / dir[2]
+	t2 = (a.ZZ - origin[2]) / dir[2]
+	tMin = math.Max(tMin, math.Min(t1, t2))
+	tMax = math.Min(tMax, math.Max(t1, t2))
+
+	return tMax > math.Max(tMin, 0)
 }
