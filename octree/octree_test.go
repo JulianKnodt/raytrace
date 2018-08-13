@@ -29,4 +29,6 @@ func TestOctree(t *testing.T) {
 		o.Insert(RandomItem())
 	}
 	o.Flatten()
+
+	// shouldn't error lol
 }

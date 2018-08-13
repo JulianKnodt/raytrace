@@ -33,6 +33,7 @@ func NewEmptyOctree(bounds bounding.AxisAlignedBoundingBox) *Octree {
 		Children:          [8]*Octree{},
 		Region:            bounds,
 		UnprocessedValues: make([]OctreeItem, 0),
+		processedValues:   make([]OctreeItem, 0),
 	}
 }
 
@@ -53,6 +54,13 @@ type OctreeItem interface {
 
 func (o *Octree) Insert(items ...OctreeItem) {
 	o.UnprocessedValues = append(o.UnprocessedValues, items...)
+}
+
+func (o *Octree) NumValues() int {
+	if o == nil {
+		return -1
+	}
+	return len(o.processedValues) + len(o.UnprocessedValues)
 }
 
 func (o *Octree) Flatten() {
