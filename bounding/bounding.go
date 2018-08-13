@@ -1,7 +1,8 @@
-package octree
+package bounding
 
 import (
 	"math"
+
 	v "raytrace/vector"
 )
 
@@ -40,6 +41,13 @@ type AxisAlignedBoundingBox struct {
 	ZZ float64
 }
 
+func NewOriginAABB(size float64) *AxisAlignedBoundingBox {
+	size = math.Abs(size)
+	return &AxisAlignedBoundingBox{
+		-size, size, -size, size, -size, size,
+	}
+}
+
 func (n AxisAlignedBoundingBox) Intersects(o AxisAlignedBoundingBox) bool {
 	return n.XX > o.Xx && o.XX > n.Xx &&
 		n.YY > o.Yy && o.YY > n.Yy &&
@@ -60,9 +68,9 @@ func (a AxisAlignedBoundingBox) ContainsVec(vec v.Vec3) bool {
 
 func (n AxisAlignedBoundingBox) Center() [3]float64 {
 	return [3]float64{
-		(n.XX - n.Xx) / 2,
-		(n.YY - n.Yy) / 2,
-		(n.ZZ - n.Zz) / 2,
+		(n.XX + n.Xx) / 2,
+		(n.YY + n.Yy) / 2,
+		(n.ZZ + n.Zz) / 2,
 	}
 }
 

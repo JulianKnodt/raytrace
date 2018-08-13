@@ -2,9 +2,9 @@ package shapes
 
 import (
 	"math"
+	"raytrace/bounding"
 	m "raytrace/material"
 	obj "raytrace/object"
-	"raytrace/octree"
 	vec "raytrace/vector"
 )
 
@@ -47,11 +47,11 @@ func maxmin(a, b, c float64) (max, min float64) {
 	}
 }
 
-func (t Triangle) Box() octree.AxisAlignedBoundingBox {
+func (t Triangle) Box() bounding.AxisAlignedBoundingBox {
 	maxX, minX := maxmin(t.a[0], t.b[0], t.c[0])
 	maxY, minY := maxmin(t.a[1], t.b[1], t.c[1])
 	maxZ, minZ := maxmin(t.a[2], t.b[2], t.c[2])
-	return octree.AxisAlignedBoundingBox{
+	return bounding.AxisAlignedBoundingBox{
 		Xx: minX,
 		XX: maxX,
 		Yy: minY,

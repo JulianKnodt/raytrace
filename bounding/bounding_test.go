@@ -1,4 +1,4 @@
-package octree
+package bounding
 
 import (
 	v "raytrace/vector"
@@ -83,6 +83,13 @@ func TestAABBIntersectsRayPastBox(t *testing.T) {
 	origin := v.Vec3{5, 5, 5}
 	dir := v.Vec3{1, 1, 1}
 	if s1.IntersectsRay(origin, dir) {
+		t.Fail()
+	}
+}
+
+func TestAABBCenter(t *testing.T) {
+	c := NewOriginAABB(10).Center()
+	if c[0] != 0 || c[1] != 0 || c[2] != 0 {
 		t.Fail()
 	}
 }
