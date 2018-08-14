@@ -56,7 +56,7 @@ func (o *Octree) Insert(items ...OctreeItem) {
 	o.UnprocessedValues = append(o.UnprocessedValues, items...)
 }
 
-func (o *Octree) NumValues() int {
+func (o *Octree) Len() int {
 	if o == nil {
 		return -1
 	}

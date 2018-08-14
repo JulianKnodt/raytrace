@@ -1,6 +1,7 @@
 package octree
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 	"time"
@@ -10,16 +11,8 @@ import (
 	v "raytrace/vector"
 )
 
-func RandomVec() v.Vec3 {
-	return v.Vec3{
-		rand.Float64()*999 - 999,
-		rand.Float64()*999 - 999,
-		rand.Float64()*999 - 999,
-	}
-}
-
 func RandomItem() OctreeItem {
-	return shapes.NewTriangle(RandomVec(), RandomVec(), RandomVec(), nil)
+	return shapes.NewTriangle(v.RandomVector(), v.RandomVector(), v.RandomVector(), nil)
 }
 
 func TestOctree(t *testing.T) {
@@ -30,5 +23,27 @@ func TestOctree(t *testing.T) {
 	}
 	o.Flatten()
 
-	// shouldn't error lol
+	// shouldn't error or loop infinitely
+}
+
+func TestOctreeIntersects(t *testing.T) {
+	o := NewEmptyOctree(*bounding.NewOriginAABB(10.00))
+	for i := 0; i < 100; i++ {
+		o.Insert(RandomItem())
+	}
+
+	o.Insert(shapes.NewTriangle(v.Vec3{0, 1, 0}, v.Vec3{0, 0, 1}, v.Vec3{1, 0, 0}, nil))
+	o.Flatten()
+
+	origin := v.Vec3{0, 0, 0}
+	dir := v.Vec3{1, 1, 1}
+
+	min, el := o.Intersects(origin, dir)
+	if math.IsInf(min, 1) || el == nil {
+		t.Fail()
+	}
+}
+
+func BenchmarkOctreeIntersects(b *testing.B) {
+
 }

@@ -19,7 +19,7 @@ func (t Triangle) Intersects(origin, dir vec.Vec3) (float64, obj.SurfaceElement)
 	if param, intersects := vec.IntersectsTriangle(t.a, t.b, t.c, origin, dir); intersects {
 		return param, t
 	}
-	return -1, nil
+	return math.Inf(1), nil
 }
 
 func (t Triangle) Mat() m.Material {

@@ -10,7 +10,7 @@ test: fmt
 	go test ./...
 
 bench: fmt
-	go test ./... -bench=.
+	go test ./... -bench=. -benchmem
 
 diff: bin
 	./raytrace -off=off/testdata/dragon.off -shift="0 0 -2" -out=testdata/differ.png

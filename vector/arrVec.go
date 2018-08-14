@@ -4,15 +4,15 @@ import (
 	"math"
 )
 
-func normalNoCheck(v []Vec3) (Vec3, bool) {
-	return Cross(Sub(v[0], v[1]), Sub(v[0], v[2])), true
+func normalNoCheck(a, b, c Vec3) (Vec3, bool) {
+	return Cross(Sub(a, c), Sub(a, b)), true
 }
 
 func Normal(v []Vec3) (Vec3, bool) {
 	if !Coplanar(v) {
 		return Vec3{}, false
 	}
-	return Cross(Sub(v[0], v[1]), Sub(v[0], v[2])), true
+	return normalNoCheck(v[0], v[1], v[2])
 }
 
 func Shift(v []Vec3, x, y, z float64) []Vec3 {
@@ -78,10 +78,7 @@ func IntersectsTriangle(a, b, c, origin, dir Vec3) (float64, bool) {
 	}
 
 	par := invArea * Dot(edge2, q)
-	if par > epsilon {
-		return par, true
-	}
-	return par, false
+	return par, par > epsilon
 }
 
 // Returns whether or not a ray starting at origin with direction dir intersects the face defined
@@ -108,7 +105,7 @@ func Interpolate(points [3]Vec3, barycentric Vec3) Vec3 {
 
 // A second variation of a function that checks whether origin dir intersects a triangle
 //
-func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool, Vec3) {
+func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool) {
 	edge1 := Sub(b, a)
 	edge2 := Sub(c, a)
 
@@ -118,7 +115,7 @@ func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool, Vec3) {
 	p := Dot(edge1, q)
 
 	if Dot(n, dir) >= 0 || math.Abs(p) <= epsilon {
-		return -1, false, Vec3{}
+		return -1, false
 	}
 
 	s := Op(Sub(origin, a), func(px float64) float64 {
@@ -132,9 +129,9 @@ func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool, Vec3) {
 	br[2] = 1 - br[0] - br[1]
 
 	if br[0] < 0 || br[1] < 0 || br[2] < 0 {
-		return -1, false, br
+		return -1, false
 	}
 
 	t := Dot(edge2, r)
-	return t, t >= 0, br
+	return t, t >= 0
 }

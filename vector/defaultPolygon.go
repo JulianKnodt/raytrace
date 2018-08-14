@@ -18,7 +18,7 @@ func NewPolygon(from []Vec3) (*Polygon, error) {
 }
 
 func (p Polygon) Normal(to Vec3) (dir Vec3, invAble bool) {
-	return normalNoCheck(p.points)
+	return normalNoCheck(p.points[0], p.points[1], p.points[2])
 }
 
 func (p Polygon) Color() Vec3 {
