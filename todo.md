@@ -3,3 +3,4 @@
 - [ ] Create KDtree module
 - [ ] Create Spherical Tree module
 - [ ] Skybox
+- [ ] Obj texture map

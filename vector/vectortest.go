@@ -1,4 +1,3 @@
-// Vector testing utils
 package vector
 
 import (
