@@ -29,7 +29,7 @@ func Direct(r v.Ray, s Scene) color.Color {
 	}
 
 	inter := v.Add(r.Origin, v.SMul(maxDist, r.Direction))
-	normalInter, invAble := near.Normal()
+	normalInter, invAble := near.NormalAt(inter)
 	v.UnitSet(&normalInter)
 	v.AddSet(&inter, v.SMul(epsilon, normalInter))
 
@@ -52,7 +52,7 @@ func Direct(r v.Ray, s Scene) color.Color {
 			}
 		}
 		if canIllum {
-			v.AddSet(&color, v.SMul(align, near.Mat().Emitted()))
+			v.AddSet(&color, v.SMul(align, near.MaterialAt(inter).Emitted()))
 		}
 	}
 	return v.ToRGBA(color)

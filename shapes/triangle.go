@@ -25,11 +25,11 @@ func (t Triangle) Intersects(r vec.Ray) (float64, obj.SurfaceElement) {
 	return math.Inf(1), nil
 }
 
-func (t Triangle) Mat() m.Material {
+func (t Triangle) MaterialAt(vec.Vec3) m.Material {
 	return t.Material
 }
 
-func (t Triangle) Normal() (vec.Vec3, bool) {
+func (t Triangle) NormalAt(vec.Vec3) (vec.Vec3, bool) {
 	return vec.Unit(vec.Cross(vec.Sub(t.a, t.b), vec.Sub(t.c, t.a))), true
 }
 

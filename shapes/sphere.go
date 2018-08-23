@@ -17,8 +17,12 @@ func NewSphere(center v.Vec3, radius float64, mat m.Material) *Sphere {
 	return &Sphere{center, radius * radius, mat}
 }
 
-func (s Sphere) normal(p v.Vec3) v.Vec3 {
-	return v.Sub(p, s.center)
+func (s Sphere) NormalAt(p v.Vec3) (v.Vec3, bool) {
+	return v.Sub(p, s.center), false
+}
+
+func (s Sphere) MaterialAt(v.Vec3) m.Material {
+	return s.Material
 }
 
 func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
@@ -37,15 +41,9 @@ func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
 	t1 := toNormal + interDist
 
 	if t0 < 0 {
-		return t1, obj.Surfel{
-			Norm:     s.normal(v.Add(r.Origin, v.SMul(t1, r.Direction))),
-			Material: s.Material,
-		}
+		return t1, s
 	} else {
-		return t0, obj.Surfel{
-			Norm:     s.normal(v.Add(r.Origin, v.SMul(t0, r.Direction))),
-			Material: s.Material,
-		}
+		return t0, s
 	}
 }
 
@@ -76,9 +74,6 @@ func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
 		// return closest point
 		t = math.Min(t0, t1)
 	}
-	shape = obj.Surfel{
-		Norm:     s.normal(v.Add(r.Origin, v.SMul(t, r.Direction))),
-		Material: s.Material,
-	}
+	shape = s
 	return
 }

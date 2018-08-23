@@ -17,22 +17,22 @@ func NewPlane(p, norm v.Vec3, mat m.Material) *Plane {
 	return &Plane{p, v.Unit(norm), mat}
 }
 
-func (p Plane) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
-	denom := v.Dot(dir, p.norm)
+func (p Plane) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
+	denom := v.Dot(r.Direction, p.norm)
 	if denom == 0 {
 		return -1, nil
 	}
-	param := v.Dot(v.Sub(p.point, origin), p.norm) / denom
+	param := v.Dot(v.Sub(p.point, r.Origin), p.norm) / denom
 	if param < 0 {
 		return param, nil
 	}
 	return param, p
 }
 
-func (p Plane) Normal() (v.Vec3, bool) {
-	return p.norm, true
+func (p Plane) NormalAt(v.Vec3) (v.Vec3, bool) {
+	return p.norm, false
 }
 
-func (p Plane) Mat() m.Material {
+func (p Plane) MaterialAt(v.Vec3) m.Material {
 	return p.Material
 }
