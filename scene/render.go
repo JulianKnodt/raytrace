@@ -50,7 +50,7 @@ func (s Scene) Render() image.RGBA {
 				out <- fieldColor{
 					int(c.x),
 					int(c.y),
-					s.IntersectionFunction(v.Origin, direction, s),
+					s.IntersectionFunction(*v.NewRay(v.Origin, direction), s),
 				}
 				atomic.AddInt64(&count, 1)
 			}

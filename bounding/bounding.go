@@ -74,21 +74,21 @@ func (n AxisAlignedBoundingBox) Center() [3]float64 {
 	}
 }
 
-func (a AxisAlignedBoundingBox) IntersectsRay(origin, dir v.Vec3) bool {
+func (a AxisAlignedBoundingBox) IntersectsRay(r v.Ray) bool {
 	tMin, tMax := math.Inf(-1), math.Inf(1)
 
-	t1 := (a.Xx - origin[0]) / dir[0]
-	t2 := (a.XX - origin[0]) / dir[0]
+	t1 := (a.Xx - r.Origin[0]) / r.Direction[0]
+	t2 := (a.XX - r.Origin[0]) / r.Direction[0]
 	tMin = math.Max(tMin, math.Min(t1, t2))
 	tMax = math.Min(tMax, math.Max(t1, t2))
 
-	t1 = (a.Yy - origin[1]) / dir[1]
-	t2 = (a.YY - origin[1]) / dir[1]
+	t1 = (a.Yy - r.Origin[1]) / r.Direction[1]
+	t2 = (a.YY - r.Origin[1]) / r.Direction[1]
 	tMin = math.Max(tMin, math.Min(t1, t2))
 	tMax = math.Min(tMax, math.Max(t1, t2))
 
-	t1 = (a.Zz - origin[2]) / dir[2]
-	t2 = (a.ZZ - origin[2]) / dir[2]
+	t1 = (a.Zz - r.Origin[2]) / r.Direction[2]
+	t2 = (a.ZZ - r.Origin[2]) / r.Direction[2]
 	tMin = math.Max(tMin, math.Min(t1, t2))
 	tMax = math.Min(tMax, math.Max(t1, t2))
 

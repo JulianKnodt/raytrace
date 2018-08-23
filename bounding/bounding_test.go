@@ -65,13 +65,13 @@ func TestAABBIntersectsRay(t *testing.T) {
 	}
 	origin := v.Vec3{0, 0, 0}
 	dir := v.Vec3{1, 1, 1}
-	if !s1.IntersectsRay(origin, dir) {
+	if !s1.IntersectsRay(*v.NewRay(origin, dir)) {
 		t.Fail()
 	}
 
 	origin = v.Vec3{0, 2, 0}
 	dir = v.Vec3{1, 0, 1}
-	if !s1.IntersectsRay(origin, dir) {
+	if !s1.IntersectsRay(*v.NewRay(origin, dir)) {
 		t.Fail()
 	}
 }
@@ -82,7 +82,7 @@ func TestAABBIntersectsRayPastBox(t *testing.T) {
 	}
 	origin := v.Vec3{5, 5, 5}
 	dir := v.Vec3{1, 1, 1}
-	if s1.IntersectsRay(origin, dir) {
+	if s1.IntersectsRay(*v.NewRay(origin, dir)) {
 		t.Fail()
 	}
 }
@@ -101,6 +101,6 @@ func BenchmarkAABBIntersectsRay(b *testing.B) {
 	origin := v.Vec3{0, 0, 0}
 	dir := v.Vec3{1, 1, 1}
 	for i := 0; i < b.N; i++ {
-		s1.IntersectsRay(origin, dir)
+		s1.IntersectsRay(*v.NewRay(origin, dir))
 	}
 }

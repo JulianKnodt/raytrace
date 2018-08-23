@@ -3,19 +3,17 @@ package scene
 import (
 	"image/color"
 	"os"
-	"path/filepath"
 
 	"raytrace/camera"
 	"raytrace/lib/sky"
 	"raytrace/light"
 	"raytrace/obj"
-	"raytrace/obj/mtl"
 	"raytrace/object"
 	"raytrace/off"
 	v "raytrace/vector"
 )
 
-type Intersector func(v.Vec3, v.Vec3, Scene) color.Color
+type Intersector func(v.Ray, Scene) color.Color
 
 type Scene struct {
 	Height               float64
@@ -59,19 +57,11 @@ func (s *Scene) AddObj(filename string, shift v.Vec3) error {
 	}
 	defer f.Close()
 
-	model, err := obj.Decode(f, func(mtlName string) (map[string]mtl.MTL, error) {
-		mtlFile, err := os.Open(filepath.Dir(filename) + mtlName)
-		if err != nil {
-			return nil, err
-		}
-		defer mtlFile.Close()
-
-		return mtl.Decode(mtlFile)
-	})
+	model, err := obj.Decode(f)
 	if err != nil {
 		return err
 	}
-	model.Shift(shift.X(), shift.Y(), shift.Z(), 0)
+	model.Shift(shift.X(), shift.Y(), shift.Z())
 	s.Objects = append(s.Objects, model)
 	return nil
 }

@@ -21,9 +21,9 @@ func (s Sphere) normal(p v.Vec3) v.Vec3 {
 	return v.Sub(p, s.center)
 }
 
-func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.SurfaceElement) {
-	center := v.Sub(s.center, origin)
-	toNormal := v.Dot(center, dir)
+func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
+	center := v.Sub(s.center, r.Origin)
+	toNormal := v.Dot(center, r.Direction)
 	if toNormal < 0 {
 		return a, nil
 	}
@@ -38,21 +38,21 @@ func (s Sphere) Intersects(origin, dir v.Vec3) (a float64, shape obj.SurfaceElem
 
 	if t0 < 0 {
 		return t1, obj.Surfel{
-			Norm:     s.normal(v.Add(origin, v.SMul(t1, dir))),
+			Norm:     s.normal(v.Add(r.Origin, v.SMul(t1, r.Direction))),
 			Material: s.Material,
 		}
 	} else {
 		return t0, obj.Surfel{
-			Norm:     s.normal(v.Add(origin, v.SMul(t0, dir))),
+			Norm:     s.normal(v.Add(r.Origin, v.SMul(t0, r.Direction))),
 			Material: s.Material,
 		}
 	}
 }
 
-func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.SurfaceElement) {
-	centerDiff := v.Sub(origin, s.center)
-	a := v.SqrMagn(dir)
-	b := 2 * v.Dot(dir, centerDiff)
+func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
+	centerDiff := v.Sub(r.Origin, s.center)
+	a := v.SqrMagn(r.Direction)
+	b := 2 * v.Dot(r.Direction, centerDiff)
 	c := v.SqrMagn(centerDiff) - s.radiusSqr
 	discrim := (b * b) - (4 * a * c)
 	if discrim < 0 || a == 0 {
@@ -77,7 +77,7 @@ func (s Sphere) Intersects2(origin, dir v.Vec3) (t float64, shape obj.SurfaceEle
 		t = math.Min(t0, t1)
 	}
 	shape = obj.Surfel{
-		Norm:     s.normal(v.Add(origin, v.SMul(t, dir))),
+		Norm:     s.normal(v.Add(r.Origin, v.SMul(t, r.Direction))),
 		Material: s.Material,
 	}
 	return

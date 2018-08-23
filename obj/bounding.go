@@ -37,7 +37,7 @@ func (o Obj) BoundingBox() bounding.AxisAlignedBoundingBox {
 func (o Obj) Triangles() []shapes.Triangle {
 	result := make([]shapes.Triangle, 0, len(o.F))
 	for i := 0; i < len(o.F); i++ {
-		result = append(result, shapes.ToTriangles(o.ShapeN(i), o.TextureN(i))...)
+		result = append(result, shapes.ToTriangles(o.ShapeN(i), nil)...)
 	}
 	return result
 }

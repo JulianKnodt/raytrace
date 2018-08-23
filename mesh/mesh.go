@@ -9,12 +9,13 @@ import (
 )
 
 type Mesh struct {
-	numVertices uint64
+	numVertices int
 	Vertices    []v.Vec3
 	Order       [][]int
+	Materials   []mat.Material
 }
 
-func (m Mesh) FaceN(n uint64) []v.Vec3 {
+func (m Mesh) FaceN(n int) []v.Vec3 {
 	order := m.Order[n]
 	out := make([]v.Vec3, 0, len(order))
 	for _, p := range order {
@@ -23,29 +24,37 @@ func (m Mesh) FaceN(n uint64) []v.Vec3 {
 	return out
 }
 
-func (m Mesh) Verts() uint64 {
+func (m Mesh) MaterialN(n int) mat.Material {
+	var material mat.Material = mat.Placeholder{}
+	if len(m.Materials) > n {
+		material = m.Materials[n]
+	}
+	return material
+}
+
+func (m Mesh) Verts() int {
 	return m.numVertices
 }
 
-func (m Mesh) Faces() uint64 {
-	return uint64(len(m.Order))
+func (m Mesh) Faces() int {
+	return len(m.Order)
 }
 
-func (m Mesh) Edges() (count uint64) {
-	for i := uint64(0); i < m.Faces(); i++ {
-		count += uint64(len(m.FaceN(i)))
+func (m Mesh) Edges() (count int) {
+	for i := 0; i < m.Faces(); i++ {
+		count += len(m.FaceN(i))
 	}
 	return
 }
 
-func (m Mesh) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
+func (m Mesh) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
 	min := math.Inf(1)
 	var shape obj.SurfaceElement
-	for i := uint64(0); i < m.Faces(); i++ {
+	for i := 0; i < m.Faces(); i++ {
 		face := m.FaceN(i)
-		if t, intersects := v.Intersects(face, origin, dir); intersects && t < min {
+		if t, intersects := v.Intersects(face, r.Origin, r.Direction); intersects && t < min {
 			min = t
-			shape = shapes.NewTriangle(face[0], face[1], face[2], mat.Placeholder{})
+			shape = shapes.NewTriangle(face[0], face[1], face[2], m.MaterialN(i))
 		}
 	}
 	return min, shape

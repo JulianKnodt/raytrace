@@ -38,7 +38,7 @@ func TestOctreeIntersects(t *testing.T) {
 	origin := v.Vec3{0, 0, 0}
 	dir := v.Vec3{1, 1, 1}
 
-	min, el := o.Intersects(origin, dir)
+	min, el := o.Intersects(*v.NewRay(origin, dir))
 	if math.IsInf(min, 1) || el == nil {
 		t.Fail()
 	}

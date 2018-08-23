@@ -8,16 +8,12 @@ import (
 	v "raytrace/vector"
 )
 
-func convert(a [4]float64) v.Vec3 {
-	return v.Vec3{a[0], a[1], a[2]}
-}
-
 // Only returns the triangle, meaning it excludes all material related things
 func (o Obj) ShapeN(n int) []v.Vec3 {
 	face := o.F[n]
 	out := make([]v.Vec3, 0, len(face.Elements))
 	for _, p := range face.Elements {
-		out = append(out, convert(o.V[p.V]))
+		out = append(out, v.Vec3(o.V[p.V]))
 	}
 	return out
 }
@@ -31,12 +27,12 @@ func (o Obj) TextureN(n int) []v.Vec3 {
 	return out
 }
 
-func (o Obj) Intersects(origin, dir v.Vec3) (float64, obj.SurfaceElement) {
+func (o Obj) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
 	min := math.Inf(1)
 	var shape obj.SurfaceElement
 	for i := 0; i < len(o.F); i++ {
 		face := o.ShapeN(i)
-		if t, intersects := v.Intersects(face, origin, dir); intersects && t < min {
+		if t, intersects := v.Intersects(face, r.Origin, r.Direction); intersects && t < min {
 			min = t
 			shape = shapes.NewTriangle(face[0], face[1], face[2], mat.Placeholder{})
 		}

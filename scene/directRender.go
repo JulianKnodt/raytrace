@@ -8,11 +8,11 @@ import (
 	v "raytrace/vector"
 )
 
-func Direct(from, dir v.Vec3, s Scene) color.Color {
+func Direct(r v.Ray, s Scene) color.Color {
 	maxDist := math.Inf(1)
 	var near object.SurfaceElement
 	for _, o := range s.Objects {
-		if dist, intersecting := o.Intersects(from, dir); intersecting != nil {
+		if dist, intersecting := o.Intersects(r); intersecting != nil {
 			if dist < maxDist && dist > 0 {
 				maxDist = dist
 				near = intersecting
@@ -28,7 +28,7 @@ func Direct(from, dir v.Vec3, s Scene) color.Color {
 		panic("something behind the camera is supposed to be visible")
 	}
 
-	inter := v.Add(from, v.SMul(maxDist, dir))
+	inter := v.Add(r.Origin, v.SMul(maxDist, r.Direction))
 	normalInter, invAble := near.Normal()
 	v.UnitSet(&normalInter)
 	v.AddSet(&inter, v.SMul(epsilon, normalInter))
@@ -46,7 +46,7 @@ func Direct(from, dir v.Vec3, s Scene) color.Color {
 			}
 		}
 		for _, o := range s.Objects {
-			if _, intersecting := o.Intersects(inter, lightDir); intersecting != nil {
+			if _, intersecting := o.Intersects(*v.NewRay(inter, lightDir)); intersecting != nil {
 				canIllum = false
 				break
 			}

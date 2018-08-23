@@ -15,5 +15,5 @@ import (
 */
 type Object interface {
 	// Surface Element maybe shouldn't be an interface, because the normal is constant...
-	Intersects(origin, dir v.Vec3) (float64, SurfaceElement)
+	Intersects(v.Ray) (float64, SurfaceElement)
 }
