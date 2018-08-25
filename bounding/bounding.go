@@ -6,24 +6,6 @@ import (
 	v "raytrace/vector"
 )
 
-type BoundingSphere struct {
-	Center [3]float64
-	Radius float64
-}
-
-func (b BoundingSphere) Intersects(other BoundingSphere) bool {
-	dist := math.Sqrt(
-		sqr(b.Center[0]-other.Center[0]) +
-			sqr(b.Center[1]-other.Center[1]) +
-			sqr(b.Center[2]-other.Center[2]))
-
-	return dist < (b.Radius + other.Radius)
-}
-
-func sqr(a float64) float64 {
-	return a * a
-}
-
 // A box which is aligned with the axis
 // intended to be used to test whether or not something intersects it
 type AxisAlignedBoundingBox struct {

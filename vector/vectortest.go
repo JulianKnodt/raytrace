@@ -1,5 +1,7 @@
 package vector
 
+// Some testing utils for vectors
+
 import (
 	"math/rand"
 )

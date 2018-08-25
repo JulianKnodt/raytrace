@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -85,92 +86,86 @@ type MTL struct {
 
 	// Mappings
 
-	Map_Kd Map_Kd
+	Map_Kd   Map_Kd
+	fileName string
 }
 
-func Decode(r io.Reader) (out map[string]MTL, err error) {
-	out = make(map[string]MTL)
-	scanner := bufio.NewScanner(r)
-	var curr *MTL
+func Decode(file *os.File) (out map[string]*MTL, err error) {
+	out = make(map[string]*MTL)
+	scanner := bufio.NewScanner(file)
+	m := new(MTL)
+	m.fileName = file.Name()
 	for scanner.Scan() {
-		err, hasNew, newMTL := curr.addMTL(strings.TrimSpace(scanner.Text()))
-		if err != nil {
-			return out, err
-		} else if hasNew {
-			if curr != nil {
-				out[curr.Name] = *curr
+		s := strings.TrimSpace(scanner.Text())
+		switch parts := strings.SplitN(s, " ", 2); parts[0] {
+		case "#", "": // Empty response
+		case "newmtl":
+			out[m.Name] = m
+			m = new(MTL)
+			m.fileName = file.Name()
+		case "Ka", "ka":
+			var x, y, z float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
+			m.Ka = [3]float64{x, y, z}
+		case "Kd", "kd":
+			var x, y, z float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
+			m.Kd = [3]float64{x, y, z}
+		case "Ks", "ks":
+		case "Ke", "ke":
+			var x, y, z float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
+			m.Ke = [3]float64{x, y, z}
+		case "Tf", "tf":
+		case "illum": // illumination
+			var illum Mode
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%d", &illum)
+			m.Illum = illum
+		case "d": // dissolve
+			var dissolve float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &dissolve)
+			m.D = dissolve
+		case "Ns", "ns":
+			var ns float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ns)
+			m.Ns = ns
+		case "sharpness":
+		case "Ni", "ni":
+			var ni float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ni)
+			m.Ni = ni
+		case "Material", "material":
+		case "Tr", "tr":
+			// TODO
+
+		// Mapping
+
+		case "map_Kd":
+			// TODO
+			fields := strings.Fields(parts[1])
+			switch len(fields) {
+			case 1:
+				// Just got the filename
+				m.Map_Kd = Map_Kd{
+					FileName: fields[0],
+				}
+			default:
+				// TODO Holy all the todos
 			}
-			curr = newMTL
+
+		default:
+			fmt.Println("Unmatched", s)
 		}
+
 	}
 
-	if curr != nil {
-		out[curr.Name] = *curr
+	if m != nil {
+		out[m.Name] = m
 	}
 	return
 }
 
-func (m *MTL) addMTL(s string) (err error, hasNewMTL bool, newMTL *MTL) {
-	switch parts := strings.SplitN(s, " ", 2); parts[0] {
-	case "#", "": // Empty response
-	case "newmtl":
-		hasNewMTL = true
-		newMTL = &MTL{
-			Name: strings.TrimSpace(parts[1]),
-		}
-	case "Ka", "ka":
-		var x, y, z float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
-		m.Ka = [3]float64{x, y, z}
-	case "Kd", "kd":
-		var x, y, z float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
-		m.Kd = [3]float64{x, y, z}
-	case "Ks", "ks":
-	case "Ke", "ke":
-		var x, y, z float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
-		m.Ke = [3]float64{x, y, z}
-	case "Tf", "tf":
-	case "illum": // illumination
-		var illum Mode
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%d", &illum)
-		m.Illum = illum
-	case "d": // dissolve
-		var dissolve float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &dissolve)
-		m.D = dissolve
-	case "Ns", "ns":
-		var ns float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ns)
-		m.Ns = ns
-	case "sharpness":
-	case "Ni", "ni":
-		var ni float64
-		_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &ni)
-		m.Ni = ni
-	case "Material", "material":
-	case "Tr", "tr":
-		// TODO
-
-	// Mapping
-
-	case "map_Kd":
-		// TODO
-		fields := strings.Fields(parts[1])
-		switch len(fields) {
-		case 1:
-			// Just got the filename
-			m.Map_Kd = Map_Kd{
-				FileName: fields[0],
-			}
-		default:
-			// TODO Holy all the todos
-		}
-
-	default:
-		fmt.Println("Unmatched", s)
-	}
-
-	return
+func (m MTL) Encode(w io.Writer) error {
+	// TODO
+	return nil
 }

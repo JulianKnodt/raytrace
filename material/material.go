@@ -2,8 +2,6 @@ package material
 
 // Represents the material of a surface element
 type Material interface {
-	// Represents the emitted color from the surface element
-	// should really be for a given direction but TODO
 	Emitted() [3]float64
 }
 

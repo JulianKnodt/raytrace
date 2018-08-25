@@ -5,21 +5,6 @@ import (
 	"testing"
 )
 
-func TestSphereIntersects(t *testing.T) {
-	s1 := BoundingSphere{
-		Center: [3]float64{0, 0, 0},
-		Radius: 5,
-	}
-	s2 := BoundingSphere{
-		Center: [3]float64{0, 0, 0},
-		Radius: 5,
-	}
-
-	if !s1.Intersects(s2) {
-		t.Fail()
-	}
-}
-
 func TestAABBBoxIntersects(t *testing.T) {
 	s1 := AxisAlignedBoundingBox{
 		0, 2, 0, 2, 0, 2,

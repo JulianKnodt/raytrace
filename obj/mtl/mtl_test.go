@@ -21,11 +21,10 @@ func TestDecode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		out, err := Decode(file)
+		_, err = Decode(file)
 		if err != nil {
 			t.Error(err)
 		}
-		fmt.Println(out)
 
 	}
 }

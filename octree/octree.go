@@ -25,8 +25,6 @@ const (
 	NXNYNZ
 )
 
-var zero = [3]float64{0, 0, 0}
-
 func NewEmptyOctree(bounds bounding.AxisAlignedBoundingBox) *Octree {
 	return &Octree{
 		Parent:            nil,

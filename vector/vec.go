@@ -38,13 +38,6 @@ func RelEqual(a, b Vec3) bool {
 	return firstRel == a[1]/b[1] && firstRel == a[2]/b[2]
 }
 
-func Sub(a, b Vec3) (r Vec3) {
-	r[0] = a[0] - b[0]
-	r[1] = a[1] - b[1]
-	r[2] = a[2] - b[2]
-	return
-}
-
 func InvSet(a *Vec3) *Vec3 {
 	a[0] = -a[0]
 	a[1] = -a[1]
@@ -60,12 +53,12 @@ func Magn(a Vec3) float64 {
 	return math.Sqrt(SqrMagn(a))
 }
 
-func Inv(a Vec3) Vec3 {
-	return Vec3{-a[0], -a[1], -a[2]}
+func (a Vec3) Magn() float64 {
+	return math.Sqrt(SqrMagn(a))
 }
 
-func Dot(a, b Vec3) float64 {
-	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
+func Inv(a Vec3) Vec3 {
+	return Vec3{-a[0], -a[1], -a[2]}
 }
 
 func sqr(a float64) float64 {

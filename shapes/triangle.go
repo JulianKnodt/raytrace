@@ -63,3 +63,24 @@ func (t Triangle) Box() bounding.AxisAlignedBoundingBox {
 		ZZ: maxZ,
 	}
 }
+
+func (t Triangle) Area() float64 {
+	n, _ := t.NormalAt(vec.Origin)
+	return n.Magn() / 2
+}
+
+// https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
+func (t Triangle) Barycentric(v vec.Vec3) vec.Vec3 {
+	v0 := t.a.Sub(t.b)
+	v1 := t.a.Sub(t.c)
+	v2 := v.Sub(t.a)
+	d00 := v0.Dot(v0)
+	d01 := v0.Dot(v1)
+	d11 := v1.Dot(v1)
+	d20 := v2.Dot(v0)
+	d21 := v2.Dot(v1)
+	denom := d00*d11 - d01*d01
+	a := (d11*d20 - d01*d21) / denom
+	b := (d00*d21 - d01*d20) / denom
+	return vec.Vec3{a, b, 1 - a - b}
+}
