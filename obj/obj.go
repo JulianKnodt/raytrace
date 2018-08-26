@@ -22,7 +22,7 @@ type Obj struct {
 	F []Face
 	// Line Element
 	L      [][]int
-	MTLLib map[string]mtl.MTL
+	MTLLib map[string]*mtl.MTL
 }
 
 type FaceElement struct {
@@ -42,7 +42,7 @@ func Decode(file *os.File) (o *Obj, err error) {
 		Vt:     make([][3]float64, 1),
 		Vn:     make([][3]float64, 1),
 		F:      make([]Face, 0),
-		MTLLib: make(map[string]mtl.MTL),
+		MTLLib: make(map[string]*mtl.MTL),
 	}
 
 	currMTL := new(mtl.MTL)
@@ -59,7 +59,7 @@ func Decode(file *os.File) (o *Obj, err error) {
 		case "g", "o":
 		case "usemtl":
 			if m, has := o.MTLLib[parts[1]]; has {
-				*currMTL = m
+				*currMTL = *m
 			}
 		case "mtllib":
 			mtlPath := filepath.Join(filepath.Dir(file.Name()), parts[1])

@@ -54,12 +54,6 @@ const (
 	Cast_Shadow // wtf is this
 )
 
-type Map_Kd struct {
-	FileName string
-	Options  []string
-	Args     []string
-}
-
 // Representation of MTL file
 type MTL struct {
 	// ambient reflectance // should be converted to its own type
@@ -69,13 +63,14 @@ type MTL struct {
 	// Specular reflectance
 	Ks [3]float64
 	Ke [3]float64
-	// Diffusion?
+	// Dissolve factor aka opacity
 	D float64
 	// TODO transmission filter
 	Tf float64
 	// TODO label // is this even in the spec???
 	Tr [3]float64
-	// TODO label
+
+	// Specular Exponent
 	Ns float64
 	// TODO label
 	Ni float64
@@ -86,8 +81,25 @@ type MTL struct {
 
 	// Mappings
 
-	Map_Kd   Map_Kd
+	Map_Kd *FileReference
+	/*
+	   Specifies that a color texture file or a color procedural texture
+	   is applied to the ambient reflectivity of the material.  During
+	   rendering, the "map_Ka" value is multiplied by the "Ka" value.
+	*/
+	Map_Ka   *FileReference
+	Map_Bump *FileReference
 	fileName string
+}
+
+func CoerceMode(i Mode) Mode {
+	switch {
+	case i > 10:
+		return 10
+	case i < 0:
+		return 0
+	}
+	return i
 }
 
 func Decode(file *os.File) (out map[string]*MTL, err error) {
@@ -112,6 +124,7 @@ func Decode(file *os.File) (out map[string]*MTL, err error) {
 			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
 			m.Kd = [3]float64{x, y, z}
 		case "Ks", "ks":
+			// https://stackoverflow.com/questions/36964747/ke-attribute-in-mtl-files
 		case "Ke", "ke":
 			var x, y, z float64
 			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f %f %f", &x, &y, &z)
@@ -120,7 +133,7 @@ func Decode(file *os.File) (out map[string]*MTL, err error) {
 		case "illum": // illumination
 			var illum Mode
 			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%d", &illum)
-			m.Illum = illum
+			m.Illum = CoerceMode(illum)
 		case "d": // dissolve
 			var dissolve float64
 			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &dissolve)
@@ -142,21 +155,36 @@ func Decode(file *os.File) (out map[string]*MTL, err error) {
 
 		case "map_Kd":
 			// TODO
-			fields := strings.Fields(parts[1])
-			switch len(fields) {
+			switch fields := strings.Fields(parts[1]); len(fields) {
 			case 1:
 				// Just got the filename
-				m.Map_Kd = Map_Kd{
+				m.Map_Kd = &FileReference{
 					FileName: fields[0],
 				}
 			default:
 				// TODO Holy all the todos
 			}
 
+		case "map_Ka":
+			switch fields := strings.Fields(parts[1]); len(fields) {
+			case 1:
+				m.Map_Ka = &FileReference{
+					FileName: fields[0],
+				}
+			}
+		case "map_bump", "bump":
+			switch fields := strings.Fields(parts[1]); len(fields) {
+			case 1:
+				m.Map_Bump = &FileReference{
+					FileName: fields[0],
+				}
+			}
 		default:
 			fmt.Println("Unmatched", s)
 		}
-
+		if err != nil {
+			return out, err
+		}
 	}
 
 	if m != nil {

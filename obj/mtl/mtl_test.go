@@ -21,9 +21,13 @@ func TestDecode(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		_, err = Decode(file)
+		mtls, err := Decode(file)
 		if err != nil {
 			t.Error(err)
+		}
+
+		for _, v := range mtls {
+			v.Material()
 		}
 
 	}

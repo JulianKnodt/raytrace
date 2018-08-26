@@ -1,7 +1,6 @@
 package material
 
 import (
-	"fmt"
 	"raytrace/utils"
 	"testing"
 )
@@ -12,7 +11,5 @@ func TestSample(t *testing.T) {
 		t.Error(err)
 	}
 
-	it := ImageTexture{img}
-
-	fmt.Println(it.Sample(1, 1))
+	Sample(img, 1, 1)
 }

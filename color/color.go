@@ -5,35 +5,48 @@ import (
 	v "raytrace/vector"
 )
 
-// Differs from go's color package by using floats
-// instead of uints
-type RGBA struct {
+// A representation of a color w/ RGB values
+// in [0, 1]
+// And alpha as represented as uint8
+type Normalized struct {
 	// RGB is the RGB of the color
 	RGB v.Vec3
 	// Alpha is still only a uint32
 	A uint8
 }
 
-func FromColor(c color.Color) RGBA {
-	conv := color.RGBAModel.Convert(c).(color.RGBA)
-	return RGBA{
-		v.Vec3{float64(conv.R), float64(conv.G), float64(conv.B)},
-		conv.A,
+const maxUint32 = 0xFFFF
+const maxUint8 = 0xFF
+
+func FromColor(c color.Color) Normalized {
+	r, g, b, a := c.RGBA()
+	return Normalized{
+		v.Vec3{
+			float64(r) / maxUint32, float64(g) / maxUint32, float64(b) / maxUint32,
+		},
+		uint8(a / maxUint32),
 	}
 }
 
-func FromVector(v v.Vec3) RGBA {
-	return RGBA{
-		v,
+func FromNormalized(a, b, c, max float64) Normalized {
+	return Normalized{
+		v.Vec3{
+			a / max, b / max, c / max,
+		},
 		0xFF,
 	}
 }
 
-func (r RGBA) ToImageColor() color.RGBA {
+func (n Normalized) Uint8() v.Vec3 {
+	return n.RGB.SMul(maxUint8)
+}
+
+func (r Normalized) ToImageColor() color.RGBA {
+	scaled := r.Uint8()
 	return color.RGBA{
-		R: uint8(r.RGB[0]),
-		G: uint8(r.RGB[1]),
-		B: uint8(r.RGB[2]),
-		A: uint8(r.A),
+		R: uint8(scaled[0]),
+		G: uint8(scaled[1]),
+		B: uint8(scaled[2]),
+		A: uint8(r.A * maxUint8),
 	}
 }

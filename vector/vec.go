@@ -85,10 +85,6 @@ func ToRGBA(a Vec3) color.RGBA {
 	return color.RGBA{uint8(a[0]), uint8(a[1]), uint8(a[2]), 255}
 }
 
-func Cross(a, b Vec3) Vec3 {
-	return Vec3{a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]}
-}
-
 func Op(in Vec3, op func(float64) float64) (out Vec3) {
 	for i, v := range in {
 		out[i] = op(v)

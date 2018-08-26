@@ -4,3 +4,4 @@
 - [ ] Create Spherical Tree module
 - [ ] Skybox
 - [ ] Obj texture map
+- [ ] Turn mesh into triples rather than random order

@@ -10,15 +10,23 @@ import (
 	vec "raytrace/vector"
 )
 
+// Represents a triangle with a material and textured vertices
 type Triangle struct {
-	a vec.Vec3
-	b vec.Vec3
-	c vec.Vec3
-	m.Material
+	// Coordinates of vertices within world
+	v0, v1, v2 vec.Vec3
+
+	// Texture Coordinates
+	t0, t1, t2 vec.Vec3
+
+	// Mapped Normal Coordinates
+	n0, n1, n2 vec.Vec3
+
+	// Rendered material of this triangle
+	*m.Material
 }
 
 func (t Triangle) Intersects(r vec.Ray) (float64, obj.SurfaceElement) {
-	if param, intersects := vec.IntersectsTriangle(t.a, t.b, t.c,
+	if param, intersects := vec.IntersectsTriangle(t.v0, t.v1, t.v2,
 		r.Origin, r.Direction); intersects {
 		return param, t
 	}
@@ -26,34 +34,46 @@ func (t Triangle) Intersects(r vec.Ray) (float64, obj.SurfaceElement) {
 }
 
 func (t Triangle) MaterialAt(vec.Vec3) m.Material {
-	return t.Material
+	return *t.Material
 }
 
 func (t Triangle) NormalAt(vec.Vec3) (vec.Vec3, bool) {
-	return vec.Unit(vec.Cross(vec.Sub(t.a, t.b), vec.Sub(t.c, t.a))), true
+	return vec.Unit(vec.Cross(vec.Sub(t.v0, t.v1), vec.Sub(t.v2, t.v0))), true
 }
 
-func NewTriangle(a, b, c vec.Vec3, mat m.Material) *Triangle {
-	return &Triangle{a, b, c, mat}
+func NewTriangle(a, b, c vec.Vec3, mat *m.Material) *Triangle {
+	n := a.Sub(c).Cross(a.Sub(b)).Unit()
+	return &Triangle{
+		v0: a, v1: b, v2: c,
+		n0: n, n1: n, n2: n,
+		Material: mat,
+	}
 }
 
-func ToTriangles(vecs []vec.Vec3, mat m.Material) []Triangle {
+func (t *Triangle) SetNormals(n0, n1, n2 vec.Vec3) {
+	t.n0 = n0
+	t.n1 = n1
+	t.n2 = n2
+}
+
+func ToTriangles(vecs []vec.Vec3, mat *m.Material) []Triangle {
 	if len(vecs) < 3 {
 		return nil
 	}
 	out := make([]Triangle, 0, len(vecs)-2)
 
 	for i := 0; i < len(vecs)-2; i++ {
-		out = append(out, Triangle{vecs[0], vecs[1], vecs[2], mat})
+		out = append(out, *NewTriangle(vecs[0], vecs[1], vecs[2], mat))
 	}
 
 	return out
 }
 
+// Returns the bounding box for the triangle
 func (t Triangle) Box() bounding.AxisAlignedBoundingBox {
-	maxX, minX := utils.Maxmin(t.a[0], t.b[0], t.c[0])
-	maxY, minY := utils.Maxmin(t.a[1], t.b[1], t.c[1])
-	maxZ, minZ := utils.Maxmin(t.a[2], t.b[2], t.c[2])
+	maxX, minX := utils.Maxmin(t.v0[0], t.v1[0], t.v2[0])
+	maxY, minY := utils.Maxmin(t.v0[1], t.v1[1], t.v2[1])
+	maxZ, minZ := utils.Maxmin(t.v0[2], t.v1[2], t.v2[2])
 	return bounding.AxisAlignedBoundingBox{
 		Xx: minX,
 		XX: maxX,
@@ -71,9 +91,9 @@ func (t Triangle) Area() float64 {
 
 // https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
 func (t Triangle) Barycentric(v vec.Vec3) vec.Vec3 {
-	v0 := t.a.Sub(t.b)
-	v1 := t.a.Sub(t.c)
-	v2 := v.Sub(t.a)
+	v0 := t.v0.Sub(t.v1)
+	v1 := t.v0.Sub(t.v2)
+	v2 := v.Sub(t.v0)
 	d00 := v0.Dot(v0)
 	d01 := v0.Dot(v1)
 	d11 := v1.Dot(v1)

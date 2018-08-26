@@ -10,10 +10,10 @@ import (
 type Sphere struct {
 	center    v.Vec3
 	radiusSqr float64
-	m.Material
+	*m.Material
 }
 
-func NewSphere(center v.Vec3, radius float64, mat m.Material) *Sphere {
+func NewSphere(center v.Vec3, radius float64, mat *m.Material) *Sphere {
 	return &Sphere{center, radius * radius, mat}
 }
 
@@ -22,7 +22,7 @@ func (s Sphere) NormalAt(p v.Vec3) (v.Vec3, bool) {
 }
 
 func (s Sphere) MaterialAt(v.Vec3) m.Material {
-	return s.Material
+	return *s.Material
 }
 
 func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {

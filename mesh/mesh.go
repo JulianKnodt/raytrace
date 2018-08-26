@@ -2,6 +2,7 @@ package mesh
 
 import (
 	"math"
+	"raytrace/color"
 	mat "raytrace/material"
 	obj "raytrace/object"
 	"raytrace/shapes"
@@ -12,7 +13,7 @@ type Mesh struct {
 	numVertices int
 	Vertices    []v.Vec3
 	Order       [][]int
-	Materials   []mat.Material
+	Materials   []*mat.Material
 }
 
 func (m Mesh) FaceN(n int) []v.Vec3 {
@@ -24,8 +25,10 @@ func (m Mesh) FaceN(n int) []v.Vec3 {
 	return out
 }
 
-func (m Mesh) MaterialN(n int) mat.Material {
-	var material mat.Material = mat.Placeholder{}
+func (m Mesh) MaterialN(n int) *mat.Material {
+	material := &mat.Material{
+		Emissive: color.FromNormalized(123, 123, 123, 255),
+	}
 	if len(m.Materials) > n {
 		material = m.Materials[n]
 	}

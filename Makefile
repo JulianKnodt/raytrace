@@ -12,10 +12,16 @@ test: fmt
 bench: fmt
 	go test ./... -bench=. -benchmem
 
-diff: bin
+diff-off: bin
 	./raytrace -off=off/testdata/dragon.off -shift="0 0 -2" -out=testdata/differ.png
 	diff testdata/differ.png testdata/og.png
 	rm testdata/differ.png
 
+diff-obj: bin
+	./raytrace -obj=obj/testdata/teapot/teapot.obj -shift="0 0 -2" -out=testdata/differ_obj.png
+
 todos:
 	grep -rn . -e "TODO"
+
+sources:
+	grep -rn . --binary-files=without-match -e "http" | sort | uniq

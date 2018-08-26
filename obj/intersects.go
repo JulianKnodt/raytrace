@@ -34,7 +34,7 @@ func (o Obj) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
 		face := o.ShapeN(i)
 		if t, intersects := v.Intersects(face, r.Origin, r.Direction); intersects && t < min {
 			min = t
-			shape = shapes.NewTriangle(face[0], face[1], face[2], mat.Placeholder{})
+			shape = shapes.NewTriangle(face[0], face[1], face[2], &mat.Material{})
 		}
 	}
 	return min, shape

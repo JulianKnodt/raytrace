@@ -2,7 +2,6 @@ package main
 
 import (
 	"math"
-	m "raytrace/material"
 	obj "raytrace/object"
 	"raytrace/shapes"
 	v "raytrace/vector"
@@ -19,7 +18,7 @@ func (t IndexedTriangleList) GetTriangle(nth int) *shapes.Triangle {
 		t.vertices[t.order[3*nth]],
 		t.vertices[t.order[3*nth+1]],
 		t.vertices[t.order[3*nth+2]],
-		m.Placeholder{})
+		nil)
 }
 
 func (t IndexedTriangleList) Size() int {

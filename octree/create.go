@@ -1,14 +1,10 @@
 package octree
 
-import (
-	"raytrace/bounding"
-)
-
 func CreateFrom(from interface {
-	BoundingBox() bounding.AxisAlignedBoundingBox
+	OctreeItem
 	Children() []OctreeItem
 }) *Octree {
-	result := NewEmptyOctree(from.BoundingBox())
+	result := NewEmptyOctree(from.Box())
 
 	result.Insert(from.Children()...)
 	result.Flatten()
