@@ -31,3 +31,7 @@ func (r Ray) Phi() float64 {
 func (r Ray) Rho() float64 {
 	return 1
 }
+
+func (r Ray) At(t float64) Vec3 {
+	return r.Origin.Add(r.Direction.SMul(t))
+}

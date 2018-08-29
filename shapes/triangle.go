@@ -6,7 +6,6 @@ import (
 	"raytrace/bounding"
 	m "raytrace/material"
 	obj "raytrace/object"
-	"raytrace/utils"
 	vec "raytrace/vector"
 )
 
@@ -33,12 +32,13 @@ func (t Triangle) Intersects(r vec.Ray) (float64, obj.SurfaceElement) {
 	return math.Inf(1), nil
 }
 
-func (t Triangle) MaterialAt(vec.Vec3) m.Material {
-	return *t.Material
+func (t Triangle) MaterialAt(vec.Vec3) *m.Material {
+	return t.Material
 }
 
-func (t Triangle) NormalAt(vec.Vec3) (vec.Vec3, bool) {
-	return vec.Unit(vec.Cross(vec.Sub(t.v0, t.v1), vec.Sub(t.v2, t.v0))), true
+func (t Triangle) NormalAt(v vec.Vec3) (vec.Vec3, bool) {
+	b := t.Barycentric(v)
+	return t.n0.SMul(b[0]).Add(t.n1.SMul(b[1])).Add(t.n2.SMul(b[2])), true
 }
 
 func NewTriangle(a, b, c vec.Vec3, mat *m.Material) *Triangle {
@@ -48,6 +48,12 @@ func NewTriangle(a, b, c vec.Vec3, mat *m.Material) *Triangle {
 		n0: n, n1: n, n2: n,
 		Material: mat,
 	}
+}
+
+func (t *Triangle) SetTextures(t0, t1, t2 vec.Vec3) {
+	t.t0 = t0
+	t.t1 = t1
+	t.t2 = t2
 }
 
 func (t *Triangle) SetNormals(n0, n1, n2 vec.Vec3) {
@@ -70,22 +76,15 @@ func ToTriangles(vecs []vec.Vec3, mat *m.Material) []Triangle {
 }
 
 // Returns the bounding box for the triangle
-func (t Triangle) Box() bounding.AxisAlignedBoundingBox {
-	maxX, minX := utils.Maxmin(t.v0[0], t.v1[0], t.v2[0])
-	maxY, minY := utils.Maxmin(t.v0[1], t.v1[1], t.v2[1])
-	maxZ, minZ := utils.Maxmin(t.v0[2], t.v1[2], t.v2[2])
-	return bounding.AxisAlignedBoundingBox{
-		Xx: minX,
-		XX: maxX,
-		Yy: minY,
-		YY: maxY,
-		Zz: minZ,
-		ZZ: maxZ,
+func (t Triangle) Box() bounding.Box {
+	return bounding.Box{
+		Min: t.v0.Min(t.v1).Min(t.v2),
+		Max: t.v0.Max(t.v1).Max(t.v2),
 	}
 }
 
 func (t Triangle) Area() float64 {
-	n, _ := t.NormalAt(vec.Origin)
+	n := t.v0.Sub(t.v1).Cross(t.v0.Sub(t.v2))
 	return n.Magn() / 2
 }
 

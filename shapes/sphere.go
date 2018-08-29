@@ -21,8 +21,8 @@ func (s Sphere) NormalAt(p v.Vec3) (v.Vec3, bool) {
 	return v.Sub(p, s.center), false
 }
 
-func (s Sphere) MaterialAt(v.Vec3) m.Material {
-	return *s.Material
+func (s Sphere) MaterialAt(v.Vec3) *m.Material {
+	return s.Material
 }
 
 func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {

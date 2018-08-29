@@ -6,11 +6,9 @@ import (
 	v "raytrace/vector"
 )
 
-var posInf = math.Inf(1)
-
 func (o Octree) Intersects(r v.Ray) (float64, object.SurfaceElement) {
 	if o.Region.IntersectsRay(r) {
-		min := posInf
+		min := math.Inf(1)
 		var res object.SurfaceElement
 		for _, child := range o.Children {
 			if child == nil {
@@ -30,6 +28,6 @@ func (o Octree) Intersects(r v.Ray) (float64, object.SurfaceElement) {
 
 		return min, res
 	} else {
-		return posInf, nil
+		return math.Inf(1), nil
 	}
 }

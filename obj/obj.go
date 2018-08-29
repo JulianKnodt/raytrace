@@ -14,9 +14,13 @@ import (
 // Direct OBJ representation
 type Obj struct {
 	// Geometric Vertices
-	V  [][3]float64
+	V [][3]float64
+	// Texture Vertices
 	Vt [][3]float64
+	// Normal Vertices
 	Vn [][3]float64
+
+	// Free Floating Points TODO
 	Vp [][3]float64
 	// Polygonal Face Element
 	F []Face
@@ -33,6 +37,39 @@ type FaceElement struct {
 
 type Face struct {
 	Elements []FaceElement
+	// Name of material used
+	Material string
+}
+
+func (f Face) Vertices() []int {
+	out := make([]int, len(f.Elements))
+	for i, el := range f.Elements {
+		// Convert back to zero indexed
+		out[i] = el.V - 1
+	}
+	return out
+}
+
+func (f Face) Normals() *[]int {
+	out := make([]int, len(f.Elements))
+	for i, el := range f.Elements {
+		if el.Vn == 0 {
+			return nil
+		}
+		out[i] = el.Vn - 1
+	}
+	return &out
+}
+
+func (f Face) Textures() *[]int {
+	out := make([]int, len(f.Elements))
+	for i, el := range f.Elements {
+		if el.Vt == 0 {
+			return nil
+		}
+		out[i] = el.Vt - 1
+	}
+	return &out
 }
 
 func Decode(file *os.File) (o *Obj, err error) {
@@ -116,6 +153,9 @@ func Decode(file *os.File) (o *Obj, err error) {
 				}
 			}
 			face.Elements = faceElements
+			if currMTL != nil {
+				face.Material = currMTL.Name
+			}
 			o.F = append(o.F, face)
 		}
 		if err != nil {

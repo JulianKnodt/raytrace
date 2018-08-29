@@ -10,10 +10,9 @@ type Octree struct {
 	Children          [8]*Octree
 	processedValues   []OctreeItem
 	UnprocessedValues []OctreeItem
-	Region            bounding.AxisAlignedBoundingBox
+	Region            bounding.Box
 }
 
-const MIN_SIZE = 1
 const (
 	XYZ = iota
 	XYNZ
@@ -25,7 +24,7 @@ const (
 	NXNYNZ
 )
 
-func NewEmptyOctree(bounds bounding.AxisAlignedBoundingBox) *Octree {
+func NewEmptyOctree(bounds bounding.Box) *Octree {
 	return &Octree{
 		Parent:            nil,
 		Children:          [8]*Octree{},
@@ -35,7 +34,7 @@ func NewEmptyOctree(bounds bounding.AxisAlignedBoundingBox) *Octree {
 	}
 }
 
-func newChildOctree(parent *Octree, bounds bounding.AxisAlignedBoundingBox) *Octree {
+func newChildOctree(parent *Octree, bounds bounding.Box) *Octree {
 	return &Octree{
 		Parent:            parent,
 		Children:          [8]*Octree{},
@@ -46,7 +45,7 @@ func newChildOctree(parent *Octree, bounds bounding.AxisAlignedBoundingBox) *Oct
 }
 
 type OctreeItem interface {
-	Box() bounding.AxisAlignedBoundingBox
+	Box() bounding.Box
 	object.Object
 }
 
@@ -71,67 +70,67 @@ func (o *Octree) Flatten() {
 	center := o.Region.Center()
 	cX, cY, cZ := center[0], center[1], center[2]
 	if o.Children[XYZ] == nil {
-		o.Children[XYZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: cX, XX: o.Region.XX,
-			Yy: cY, YY: o.Region.YY,
-			Zz: cZ, ZZ: o.Region.ZZ,
-		})
+		o.Children[XYZ] = newChildOctree(o, *bounding.NewBox(
+			cX, o.Region.Max[0],
+			cY, o.Region.Max[1],
+			cZ, o.Region.Max[2],
+		))
 	}
 
 	if o.Children[XYNZ] == nil {
-		o.Children[XYNZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: cX, XX: o.Region.XX,
-			Yy: cY, YY: o.Region.YY,
-			Zz: o.Region.Zz, ZZ: cZ,
-		})
+		o.Children[XYNZ] = newChildOctree(o, *bounding.NewBox(
+			cX, o.Region.Max[0],
+			cY, o.Region.Max[1],
+			o.Region.Min[2], cZ,
+		))
 	}
 
 	if o.Children[XNYZ] == nil {
-		o.Children[XNYZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: cX, XX: o.Region.XX,
-			Yy: o.Region.Yy, YY: cY,
-			Zz: cZ, ZZ: o.Region.ZZ,
-		})
+		o.Children[XNYZ] = newChildOctree(o, *bounding.NewBox(
+			cX, o.Region.Max[0],
+			o.Region.Min[1], cY,
+			cZ, o.Region.Max[2],
+		))
 	}
 
 	if o.Children[XNYNZ] == nil {
-		o.Children[XNYNZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: cX, XX: o.Region.XX,
-			Yy: o.Region.Yy, YY: cY,
-			Zz: o.Region.Zz, ZZ: cZ,
-		})
+		o.Children[XNYNZ] = newChildOctree(o, *bounding.NewBox(
+			cX, o.Region.Max[0],
+			o.Region.Min[1], cY,
+			o.Region.Min[2], cZ,
+		))
 	}
 
 	if o.Children[NXYZ] == nil {
-		o.Children[NXYZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: o.Region.Xx, XX: cX,
-			Yy: cY, YY: o.Region.YY,
-			Zz: cZ, ZZ: o.Region.ZZ,
-		})
+		o.Children[NXYZ] = newChildOctree(o, *bounding.NewBox(
+			o.Region.Min[0], cX,
+			cY, o.Region.Max[1],
+			cZ, o.Region.Max[2],
+		))
 	}
 
 	if o.Children[NXYNZ] == nil {
-		o.Children[NXYNZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: o.Region.Xx, XX: cX,
-			Yy: cY, YY: o.Region.YY,
-			Zz: o.Region.Zz, ZZ: cZ,
-		})
+		o.Children[NXYNZ] = newChildOctree(o, *bounding.NewBox(
+			o.Region.Min[0], cX,
+			cY, o.Region.Max[1],
+			o.Region.Min[2], cZ,
+		))
 	}
 
 	if o.Children[NXNYZ] == nil {
-		o.Children[NXNYZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: o.Region.Xx, XX: cX,
-			Yy: o.Region.Yy, YY: cY,
-			Zz: cZ, ZZ: o.Region.ZZ,
-		})
+		o.Children[NXNYZ] = newChildOctree(o, *bounding.NewBox(
+			o.Region.Min[0], cX,
+			o.Region.Min[1], cY,
+			cZ, o.Region.Max[2],
+		))
 	}
 
 	if o.Children[NXNYNZ] == nil {
-		o.Children[NXNYNZ] = newChildOctree(o, bounding.AxisAlignedBoundingBox{
-			Xx: o.Region.Xx, XX: cX,
-			Yy: o.Region.Yy, YY: cY,
-			Zz: o.Region.Zz, ZZ: cZ,
-		})
+		o.Children[NXNYNZ] = newChildOctree(o, *bounding.NewBox(
+			o.Region.Min[0], cX,
+			o.Region.Min[1], cY,
+			o.Region.Min[2], cZ,
+		))
 	}
 
 	for _, item := range o.UnprocessedValues {

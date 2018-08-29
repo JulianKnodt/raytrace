@@ -10,5 +10,5 @@ type SurfaceElement interface {
 	// This normal is constant based on wherever it originally intersected
 	NormalAt(v.Vec3) (dir v.Vec3, invertible bool)
 
-	MaterialAt(v.Vec3) m.Material
+	MaterialAt(v.Vec3) *m.Material
 }

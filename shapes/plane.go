@@ -9,11 +9,11 @@ import (
 type Plane struct {
 	point v.Vec3
 	norm  v.Vec3
-	m.Material
+	*m.Material
 }
 
 // should be open to other constructions
-func NewPlane(p, norm v.Vec3, mat m.Material) *Plane {
+func NewPlane(p, norm v.Vec3, mat *m.Material) *Plane {
 	return &Plane{p, v.Unit(norm), mat}
 }
 
@@ -33,6 +33,6 @@ func (p Plane) NormalAt(v.Vec3) (v.Vec3, bool) {
 	return p.norm, false
 }
 
-func (p Plane) MaterialAt(v.Vec3) m.Material {
+func (p Plane) MaterialAt(v.Vec3) *m.Material {
 	return p.Material
 }

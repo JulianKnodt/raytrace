@@ -17,7 +17,7 @@ func RandomItem() OctreeItem {
 
 func TestOctree(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
-	o := NewEmptyOctree(*bounding.NewOriginAABB(1000.0))
+	o := NewEmptyOctree(*bounding.NewBox(0, 1000, 0, 1000, 0, 1000))
 	for i := 0; i < 100; i++ {
 		o.Insert(RandomItem())
 	}
@@ -27,7 +27,7 @@ func TestOctree(t *testing.T) {
 }
 
 func TestOctreeIntersects(t *testing.T) {
-	o := NewEmptyOctree(*bounding.NewOriginAABB(10.00))
+	o := NewEmptyOctree(*bounding.NewBox(-10, 10, -10, 10, -10, 10))
 	for i := 0; i < 100; i++ {
 		o.Insert(RandomItem())
 	}

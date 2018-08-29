@@ -9,6 +9,7 @@ import (
 	"raytrace/light"
 	"raytrace/obj"
 	"raytrace/object"
+	"raytrace/octree"
 	"raytrace/off"
 	v "raytrace/vector"
 )
@@ -42,7 +43,7 @@ func (s *Scene) AddOff(filename string, shift v.Vec3) error {
 	}
 
 	model.Vertices = v.Shift(model.Vertices, shift.X(), shift.Y(), shift.Z())
-	s.Objects = append(s.Objects, model)
+	s.Objects = append(s.Objects, octree.CreateFrom(model))
 	return nil
 }
 
@@ -62,7 +63,7 @@ func (s *Scene) AddObj(filename string, shift v.Vec3) error {
 		return err
 	}
 	model.Shift(shift.X(), shift.Y(), shift.Z())
-	s.Objects = append(s.Objects, model)
+	s.Objects = append(s.Objects, octree.CreateFrom(model.IndexedTriangleList()))
 	return nil
 }
 

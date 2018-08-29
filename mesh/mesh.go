@@ -10,10 +10,9 @@ import (
 )
 
 type Mesh struct {
-	numVertices int
-	Vertices    []v.Vec3
-	Order       [][]int
-	Materials   []*mat.Material
+	Vertices  []v.Vec3
+	Order     [][]int
+	Materials []*mat.Material
 }
 
 func (m Mesh) FaceN(n int) []v.Vec3 {
@@ -36,7 +35,7 @@ func (m Mesh) MaterialN(n int) *mat.Material {
 }
 
 func (m Mesh) Verts() int {
-	return m.numVertices
+	return len(m.Vertices)
 }
 
 func (m Mesh) Faces() int {

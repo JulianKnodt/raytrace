@@ -52,7 +52,7 @@ func Direct(r v.Ray, s Scene) color.Color {
 			}
 		}
 		if canIllum {
-			v.AddSet(&color, v.SMul(align, near.MaterialAt(inter).Emissive.Uint8()))
+			v.AddSet(&color, v.SMul(align, near.MaterialAt(inter).Emitted().Uint8()))
 		}
 	}
 	return v.ToRGBA(color)

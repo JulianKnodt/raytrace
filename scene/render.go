@@ -36,7 +36,7 @@ func (s Scene) Render() image.RGBA {
 	var invWidth float64 = 1.0 / s.Width
 	var invHeight float64 = 1.0 / s.Height
 	aspectRatio := s.Width * invHeight
-	angle := math.Tan(math.Pi * 0.5 * s.Camera.FOV() / 180)
+	angle := math.Tan(math.Pi * 0.5 * s.Camera.FOV / 180)
 	out := make(chan fieldColor, int(s.Height*s.Width))
 	work := make(chan coord, int(s.Height*s.Width))
 	count := int64(0)

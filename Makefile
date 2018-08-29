@@ -18,7 +18,9 @@ diff-off: bin
 	rm testdata/differ.png
 
 diff-obj: bin
-	./raytrace -obj=obj/testdata/teapot/teapot.obj -shift="0 0 -2" -out=testdata/differ_obj.png
+	./raytrace -obj=obj/testdata/teapot.obj -shift="0 -2 -10" -out=testdata/differ_obj.png
+	diff testdata/differ_obj.png testdata/og_obj.png
+	rm testdata/differ_obj.png
 
 todos:
 	grep -rn . -e "TODO"
