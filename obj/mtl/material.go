@@ -20,6 +20,12 @@ func (m *MTL) Material() *material.Material {
 		fmt.Println(err)
 	}
 
+	if img, err := m.Map_Ka.Load(m.fileName); err == nil {
+		out.AmbientTexture = img
+	} else {
+		fmt.Println(err)
+	}
+
 	if img, err := m.Map_Bump.Load(m.fileName); err == nil {
 		out.BumpTexture = img
 	} else {

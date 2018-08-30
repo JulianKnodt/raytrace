@@ -4,3 +4,4 @@
 package material
 
 // https://www.quora.com/What-is-the-difference-between-Ambient-Diffuse-and-Specular-Light-in-OpenGL-Figures-for-illustration-are-encouraged
+// http://cse.csusb.edu/tongyu/courses/cs520/notes/texture.php

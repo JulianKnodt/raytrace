@@ -18,6 +18,7 @@ type Material struct {
 
 	BumpTexture texture.Texture
 
+	AmbientTexture texture.Texture
 	DiffuseTexture texture.Texture
 }
 
@@ -30,7 +31,7 @@ func (m *Material) Emitted() color.Normalized {
 
 func (m *Material) Ambience() color.Normalized {
 	if m == nil {
-		return color.DefaultColor
+		return color.Blank
 	}
 	return m.Ambient
 }

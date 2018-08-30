@@ -57,7 +57,7 @@ func main() {
 
 	file, _ := os.OpenFile(*out, os.O_WRONLY|os.O_CREATE, 0600)
 	defer file.Close()
-	if err := png.Encode(file, &img); err != nil {
+	if err := png.Encode(file, img); err != nil {
 		panic(err)
 	}
 }

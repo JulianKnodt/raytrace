@@ -103,3 +103,13 @@ func (t Triangle) Barycentric(v vec.Vec3) vec.Vec3 {
 	b := (d00*d21 - d01*d20) / denom
 	return vec.Vec3{a, b, 1 - a - b}
 }
+
+func (t Triangle) TextureCoordinates(v vec.Vec3) (float64, float64) {
+	b := t.Barycentric(v)
+	out := vec.Vec3{}
+	out.
+		Add(t.t0.SMul(b[0])).
+		Add(t.t1.SMul(b[1])).
+		Add(t.t2.SMul(b[2]))
+	return out[0], out[1]
+}

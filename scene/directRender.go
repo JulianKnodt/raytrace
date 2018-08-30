@@ -4,6 +4,8 @@ import (
 	"image/color"
 	"math"
 
+	mat "raytrace/material"
+	texture "raytrace/material/texture"
 	"raytrace/object"
 	v "raytrace/vector"
 )
@@ -30,10 +32,17 @@ func Direct(r v.Ray, s Scene) color.Color {
 
 	inter := v.Add(r.Origin, v.SMul(maxDist, r.Direction))
 	normalInter, invAble := near.NormalAt(inter)
+	material := near.MaterialAt(inter)
 	v.UnitSet(&normalInter)
 	v.AddSet(&inter, v.SMul(epsilon, normalInter))
 
-	var color v.Vec3
+	// Ambient color is regardless
+	color := material.Ambience()
+	if s, ok := near.(mat.Sampleable); ok && material != nil && material.AmbientTexture != nil {
+		u, v := s.TextureCoordinates(inter)
+		color.RGB = color.RGB.Add(texture.Sample(material.AmbientTexture, u, v).RGB)
+	}
+
 	for _, l := range s.Lights {
 		lightDir, canIllum := l.LightTo(inter) // intersection -> light
 		align := v.Dot(normalInter, lightDir)
@@ -52,8 +61,8 @@ func Direct(r v.Ray, s Scene) color.Color {
 			}
 		}
 		if canIllum {
-			v.AddSet(&color, v.SMul(align, near.MaterialAt(inter).Emitted().Uint8()))
+			color.RGB = color.RGB.Add(material.Diffusive().RGB.SMul(align))
 		}
 	}
-	return v.ToRGBA(color)
+	return color.ToImageColor()
 }

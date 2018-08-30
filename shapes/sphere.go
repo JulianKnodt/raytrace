@@ -47,6 +47,16 @@ func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
 	}
 }
 
+// https://gamedev.stackexchange.com/questions/114412/how-to-get-uv-coordinates-for-sphere-cylindrical-projection
+func (s Sphere) TextureCoordinates(vec v.Vec3) (u, v float64) {
+	// https://github.com/fogleman/pt/blob/master/pt/sphere.go
+	n := vec.Sub(s.center).Unit()
+	return math.Atan2(n[0], n[2])/(2*math.Pi) + 0.5,
+		0.5 - n[1]*0.5
+	//	return 1 - (math.Pi+math.Atan2(radial[2], radial[0]))/(2*math.Pi),
+	//		(math.Atan2(radial[1], math.Hypot(radial[0], radial[2])) + math.Pi/2) / math.Pi
+}
+
 func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
 	centerDiff := v.Sub(r.Origin, s.center)
 	a := v.SqrMagn(r.Direction)

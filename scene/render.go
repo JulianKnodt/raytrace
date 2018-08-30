@@ -31,7 +31,7 @@ type fieldColor struct {
 // Returns an image of given height and width
 // with the given objects using 'inter' intersection
 // algorithm choice
-func (s Scene) Render() image.RGBA {
+func (s Scene) Render() *image.RGBA {
 	img := image.NewRGBA(image.Rect(0, 0, int(s.Width), int(s.Height)))
 	var invWidth float64 = 1.0 / s.Width
 	var invHeight float64 = 1.0 / s.Height
@@ -94,5 +94,5 @@ func (s Scene) Render() image.RGBA {
 		img.Set(o.x, o.y, o.color)
 	}
 
-	return *img
+	return img
 }

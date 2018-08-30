@@ -47,11 +47,6 @@ func (r Normalized) ToImageColor() color.RGBA {
 		R: uint8(scaled[0]),
 		G: uint8(scaled[1]),
 		B: uint8(scaled[2]),
-		A: uint8(r.A * maxUint8),
+		A: uint8(r.A),
 	}
-}
-
-var DefaultColor = Normalized{
-	v.Vec3{0.5, 0.5, 0.5},
-	maxUint8,
 }
