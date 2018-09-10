@@ -21,4 +21,4 @@ func (v Vec3) Add(o Vec3) Vec3 {
 func (v *Vec3) AddSet(o Vec3) *Vec3 {
 	AddSet(v, o)
 	return v
-
+}

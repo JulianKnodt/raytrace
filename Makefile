@@ -9,6 +9,9 @@ bin: fmt
 test: fmt
 	go test ./...
 
+test-race: fmt
+	go test ./... -race
+
 bench: fmt
 	go test ./... -bench=. -benchmem
 

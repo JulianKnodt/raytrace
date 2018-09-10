@@ -33,7 +33,7 @@ func FromNormalized(a, b, c, max float64) Normalized {
 		v.Vec3{
 			a / max, b / max, c / max,
 		},
-		maxUint8,
+		1,
 	}
 }
 
@@ -47,6 +47,6 @@ func (r Normalized) ToImageColor() color.RGBA {
 		R: uint8(scaled[0]),
 		G: uint8(scaled[1]),
 		B: uint8(scaled[2]),
-		A: uint8(r.A),
+		A: uint8(r.A) * maxUint8,
 	}
 }
