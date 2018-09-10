@@ -18,7 +18,7 @@ func NewRay(origin, dir Vec3) *Ray {
 	}
 }
 
-// Returns the length of the ray
+// Returns the direction of the ray relative to the x-axis
 func (r Ray) Theta() float64 {
 	return math.Acos(r.Direction[2])
 }
