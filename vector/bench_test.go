@@ -9,7 +9,7 @@ func BenchmarkAdd(b *testing.B) {
 		out := Vec3{0, 0, 0}
 		result := Vec3{1, 1, 1}
 		for i := 0; i < b.N; i++ {
-			result = Add(out, result)
+			result = *Add(out, result)
 		}
 	})
 
@@ -27,7 +27,7 @@ func BenchmarkSub(b *testing.B) {
 		out := Vec3{0, 0, 0}
 		result := Vec3{1, 1, 1}
 		for i := 0; i < b.N; i++ {
-			result = Sub(out, result)
+			result = *Sub(out, result)
 		}
 	})
 
@@ -45,7 +45,7 @@ func BenchmarkLerp(b *testing.B) {
 		out := Vec3{0, 0, 0}
 		result := Vec3{1, 1, 1}
 		for i := 0; i < b.N; i++ {
-			result = Lerp(out, result, 0.3)
+			result = *Lerp(out, result, 0.3)
 		}
 	})
 
@@ -53,7 +53,7 @@ func BenchmarkLerp(b *testing.B) {
 		out := Vec3{0, 0, 0}
 		result := Vec3{1, 1, 1}
 		for i := 0; i < b.N; i++ {
-			out = out.Lerp(result, 0.3)
+			out = *out.Lerp(result, 0.3)
 		}
 	})
 }

@@ -42,8 +42,8 @@ func NewCamera(position, direction, up v.Vec3,
 ) *Camera {
 	return &Camera{
 		Transform:      *v.NewRay(position, direction),
-		Up:             up.Unit(),
-		Right:          direction.Cross(up).Unit(),
+		Up:             *up.Unit(),
+		Right:          *direction.Cross(up).UnitSet(),
 		FOV:            fieldOfView,
 		RenderDistance: renderDistance,
 		Width:          float64(width),
@@ -70,9 +70,9 @@ func (c Camera) To(x, y int) *v.Ray {
 	ndcY := (float64(y) + 0.5) / c.Height
 	rasterizedX := (2*ndcX - 1) * c.AspectRatio()
 	rasterizedY := 1 + 2*ndcY
-	dir := c.Transform.At(c.RenderDistance).
-		Add(c.Up.SMul(-rasterizedX)).
-		Add(c.Right.SMul(rasterizedY))
+	dir := *c.Transform.At(c.RenderDistance).
+		AddSet(*c.Up.SMul(-rasterizedX)).
+		AddSet(*c.Right.SMul(rasterizedY))
 	return v.NewRay(c.Transform.Origin, dir)
 }
 

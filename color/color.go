@@ -11,20 +11,21 @@ import (
 type Normalized struct {
 	// RGB is the RGB of the color
 	RGB v.Vec3
-	// Alpha is still only a uint32
-	A uint8
+
+	A float64
 }
 
-const maxUint32 = 0xFFFF
 const maxUint8 = 0xFF
+const maxUint16 = 0xFFFF
+const maxUint32 = 0xFFFFFFFF
 
 func FromColor(c color.Color) Normalized {
-	r, g, b, a := c.RGBA()
+	rgba := color.RGBA64Model.Convert(c).(color.RGBA64)
 	return Normalized{
 		v.Vec3{
-			float64(r) / maxUint32, float64(g) / maxUint32, float64(b) / maxUint32,
+			float64(rgba.R) / maxUint16, float64(rgba.G) / maxUint16, float64(rgba.B) / maxUint16,
 		},
-		uint8(a / maxUint32),
+		float64(rgba.A) / maxUint16,
 	}
 }
 
@@ -38,15 +39,22 @@ func FromNormalized(a, b, c, max float64) Normalized {
 }
 
 func (n Normalized) Uint8() v.Vec3 {
-	return n.RGB.SMul(maxUint8)
+	return *n.RGB.SMul(maxUint8)
 }
 
 func (r Normalized) ToImageColor() color.RGBA {
 	scaled := r.Uint8()
-	return color.RGBA{
+	out := color.RGBA{
 		R: uint8(scaled[0]),
 		G: uint8(scaled[1]),
 		B: uint8(scaled[2]),
-		A: uint8(r.A) * maxUint8,
+		A: uint8(r.A * maxUint8),
 	}
+	return out
+}
+
+func (n *Normalized) Mix(o Normalized) *Normalized {
+	n.RGB = *n.RGB.Add(o.RGB).SMulSet(0.5)
+	n.A = (n.A + o.A) / 2
+	return n
 }

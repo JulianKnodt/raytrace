@@ -38,11 +38,13 @@ func (t Triangle) MaterialAt(vec.Vec3) *m.Material {
 
 func (t Triangle) NormalAt(v vec.Vec3) (vec.Vec3, bool) {
 	b := t.Barycentric(v)
-	return t.n0.SMul(b[0]).Add(t.n1.SMul(b[1])).Add(t.n2.SMul(b[2])), true
+	return *t.n0.SMul(b[0]).
+		AddSet(*t.n1.SMul(b[1])).
+		AddSet(*t.n2.SMul(b[2])), true
 }
 
 func NewTriangle(a, b, c vec.Vec3, mat *m.Material) *Triangle {
-	n := a.Sub(c).Cross(a.Sub(b)).Unit()
+	n := *a.Sub(c).CrossSet(*a.Sub(b)).UnitSet()
 	return &Triangle{
 		v0: a, v1: b, v2: c,
 		n0: n, n1: n, n2: n,
@@ -78,21 +80,21 @@ func ToTriangles(vecs []vec.Vec3, mat *m.Material) []Triangle {
 // Returns the bounding box for the triangle
 func (t Triangle) Box() bounding.Box {
 	return bounding.Box{
-		Min: t.v0.Min(t.v1).Min(t.v2),
-		Max: t.v0.Max(t.v1).Max(t.v2),
+		Min: *t.v0.Min(t.v1).MinSet(t.v2),
+		Max: *t.v0.Max(t.v1).MaxSet(t.v2),
 	}
 }
 
 func (t Triangle) Area() float64 {
-	n := t.v0.Sub(t.v1).Cross(t.v0.Sub(t.v2))
+	n := t.v0.Sub(t.v1).CrossSet(*t.v0.Sub(t.v2))
 	return n.Magn() / 2
 }
 
 // https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
 func (t Triangle) Barycentric(v vec.Vec3) vec.Vec3 {
-	v0 := t.v0.Sub(t.v1)
-	v1 := t.v0.Sub(t.v2)
-	v2 := v.Sub(t.v0)
+	v0 := *t.v0.Sub(t.v1)
+	v1 := *t.v0.Sub(t.v2)
+	v2 := *v.Sub(t.v0)
 	d00 := v0.Dot(v0)
 	d01 := v0.Dot(v1)
 	d11 := v1.Dot(v1)
@@ -106,10 +108,10 @@ func (t Triangle) Barycentric(v vec.Vec3) vec.Vec3 {
 
 func (t Triangle) TextureCoordinates(v vec.Vec3) (float64, float64) {
 	b := t.Barycentric(v)
-	out := vec.Vec3{}
+	out := &vec.Vec3{}
 	out.
-		Add(t.t0.SMul(b[0])).
-		Add(t.t1.SMul(b[1])).
-		Add(t.t2.SMul(b[2]))
-	return out[0], out[1]
+		AddSet(*t.t0.SMul(b[0])).
+		AddSet(*t.t1.SMul(b[1])).
+		AddSet(*t.t2.SMul(b[2]))
+	return out.X(), out.Y()
 }

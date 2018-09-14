@@ -14,7 +14,11 @@ type Material struct {
 	Ambient  color.Normalized
 	Diffuse  color.Normalized
 	Emissive color.Normalized
-	// Specular will be ignored for now...
+	// Specular color.Normalized will be ignored for now...
+
+	// [0, 1], for fully transparent(in which case why're you rendering this)
+	// or fully opaque
+	Transparency float64
 
 	BumpTexture texture.Texture
 

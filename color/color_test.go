@@ -41,6 +41,7 @@ func TestConversionImage(t *testing.T) {
 			original := color.RGBAModel.Convert(c).(color.RGBA)
 			if !ApproxEqual(converted, original) {
 				t.Error(converted, original)
+				t.FailNow()
 			}
 		}
 	}

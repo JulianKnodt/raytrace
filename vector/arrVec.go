@@ -5,7 +5,7 @@ import (
 )
 
 func normalNoCheck(a, b, c Vec3) (Vec3, bool) {
-	return Cross(Sub(a, c), Sub(a, b)), true
+	return *CrossSet(Sub(a, c), *Sub(a, b)), true
 }
 
 func Normal(v []Vec3) (Vec3, bool) {
@@ -19,7 +19,7 @@ func Shift(v []Vec3, x, y, z float64) []Vec3 {
 	shiftVec := Vec3{x, y, z}
 	result := make([]Vec3, len(v))
 	for i, vec := range v {
-		result[i] = Add(vec, shiftVec)
+		result[i] = *Add(vec, shiftVec)
 	}
 	return result
 }
@@ -29,10 +29,10 @@ func Coplanar(v []Vec3) bool {
 		return true
 	}
 
-	test := Cross(Sub(v[0], v[1]), Sub(v[0], v[2]))
+	test := *CrossSet(Sub(v[0], v[1]), *Sub(v[0], v[2]))
 
 	for _, vec := range v[2:] {
-		if Dot(test, Sub(v[0], vec)) != 0 {
+		if Dot(test, *Sub(v[0], vec)) != 0 {
 			return false
 		}
 	}
@@ -44,9 +44,9 @@ func Colinear(v []Vec3) bool {
 		return true
 	}
 
-	test := Sub(v[0], v[1])
+	test := *Sub(v[0], v[1])
 	for _, vec := range v[2:] {
-		if !RelEqual(test, Sub(v[0], vec)) {
+		if !Proportional(test, *Sub(v[0], vec)) {
 			return false
 		}
 	}
@@ -56,22 +56,22 @@ func Colinear(v []Vec3) bool {
 const epsilon = 0.000001
 
 func IntersectsTriangle(a, b, c, origin, dir Vec3) (float64, bool) {
-	edge1 := Sub(b, a)
-	edge2 := Sub(c, a)
-	h := Cross(dir, edge2)
+	edge1 := *Sub(b, a)
+	edge2 := *Sub(c, a)
+	h := *Cross(dir, edge2)
 	area := Dot(edge1, h)
 	if area > -epsilon && area < epsilon {
 		return -1, false // this is collinear
 	}
 
 	invArea := 1 / area
-	s := Sub(origin, a)
+	s := *Sub(origin, a)
 	u := invArea * Dot(s, h)
 	if u < 0 || u > 1 {
 		return -1, false
 	}
 
-	q := Cross(s, edge1)
+	q := *Cross(s, edge1)
 	v := invArea * Dot(dir, q)
 	if v < 0 || (u+v) > 1 {
 		return -1, false
@@ -96,32 +96,32 @@ func Intersects(v []Vec3, origin, dir Vec3) (float64, bool) {
 }
 
 func Interpolate(points [3]Vec3, barycentric Vec3) Vec3 {
-	result := Vec3{}
+	result := &Vec3{}
 	for i, point := range points {
-		AddSet(&result, SMul(barycentric[i], point))
+		AddSet(result, *point.SMul(barycentric[i]))
 	}
-	return result
+	return *result
 }
 
 // A second variation of a function that checks whether origin dir intersects a triangle
 //
 func IntersectsTriangle2(a, b, c, origin, dir Vec3) (float64, bool) {
-	edge1 := Sub(b, a)
-	edge2 := Sub(c, a)
+	edge1 := *Sub(b, a)
+	edge2 := *Sub(c, a)
 
-	n := Unit(Cross(edge1, edge2)) // normal to triangle
+	n := *UnitSet(Cross(edge1, edge2)) // normal to triangle
 
-	q := Cross(dir, edge2)
+	q := *Cross(dir, edge2)
 	p := Dot(edge1, q)
 
 	if Dot(n, dir) >= 0 || math.Abs(p) <= epsilon {
 		return -1, false
 	}
 
-	s := Op(Sub(origin, a), func(px float64) float64 {
+	s := *Op(*Sub(origin, a), func(px float64) float64 {
 		return px / p
 	})
-	r := Cross(s, edge1)
+	r := *Cross(s, edge1)
 
 	br := Vec3{}
 	br[0] = Dot(s, q)

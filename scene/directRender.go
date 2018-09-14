@@ -1,16 +1,16 @@
 package scene
 
 import (
-	"image/color"
 	"math"
 
+	"raytrace/color"
 	mat "raytrace/material"
 	texture "raytrace/material/texture"
 	"raytrace/object"
 	v "raytrace/vector"
 )
 
-func Direct(r v.Ray, s Scene) color.Color {
+func Direct(r v.Ray, s Scene) *color.Normalized {
 	maxDist := math.Inf(1)
 	var near object.SurfaceElement
 	for _, o := range s.Objects {
@@ -30,39 +30,28 @@ func Direct(r v.Ray, s Scene) color.Color {
 		panic("something behind the camera is supposed to be visible")
 	}
 
-	inter := v.Add(r.Origin, v.SMul(maxDist, r.Direction))
-	normalInter, invAble := near.NormalAt(inter)
-	material := near.MaterialAt(inter)
+	inter := r.Origin.Add(*r.Direction.SMul(maxDist))
+	normalInter, _ := near.NormalAt(*inter)
+	material := near.MaterialAt(*inter)
 	v.UnitSet(&normalInter)
-	v.AddSet(&inter, v.SMul(epsilon, normalInter))
+	inter.AddSet(*normalInter.SMul(epsilon))
+	bounce := *v.NewRay(*inter, normalInter)
 
-	// Ambient color is regardless
-	color := material.Ambience()
+	// Ambient color is always regarded regardless of light
+	var c *color.Normalized
+	*c = material.Ambience()
 	if s, ok := near.(mat.Sampleable); ok && material != nil && material.AmbientTexture != nil {
-		u, v := s.TextureCoordinates(inter)
-		color.RGB = color.RGB.Add(texture.Sample(material.AmbientTexture, u, v).RGB)
+		u, v := s.TextureCoordinates(*inter)
+		c.RGB.AddSet(texture.Sample(material.AmbientTexture, u, v).RGB)
 	}
 
 	for _, l := range s.Lights {
-		lightDir, canIllum := l.LightTo(inter) // intersection -> light
-		align := v.Dot(normalInter, lightDir)
-		if !canIllum || align <= 0 {
-			if align < 0 && invAble {
-				align = -align
-				v.AddSet(&inter, v.SMul(-2*epsilon, normalInter))
-			} else {
-				continue
-			}
+		t, surfel := l.Intersects(bounce)
+		if surfel == nil {
+			continue
 		}
-		for _, o := range s.Objects {
-			if _, intersecting := o.Intersects(*v.NewRay(inter, lightDir)); intersecting != nil {
-				canIllum = false
-				break
-			}
-		}
-		if canIllum {
-			color.RGB = color.RGB.Add(material.Diffusive().RGB.SMul(align))
-		}
+		mat := surfel.MaterialAt(*bounce.At(t))
+		c.Mix(mat.Emitted())
 	}
-	return color.ToImageColor()
+	return c
 }

@@ -11,10 +11,11 @@ type Ray struct {
 	Direction Vec3
 }
 
+// Returns a new ray with origin and direction(which is converted to a unit vector)
 func NewRay(origin, dir Vec3) *Ray {
 	return &Ray{
 		Origin:    origin,
-		Direction: Unit(dir),
+		Direction: *Unit(dir),
 	}
 }
 
@@ -32,6 +33,7 @@ func (r Ray) Rho() float64 {
 	return 1
 }
 
-func (r Ray) At(t float64) Vec3 {
-	return r.Origin.Add(r.Direction.SMul(t))
+// Returns a new vector of the ray at point t from the origin
+func (r Ray) At(t float64) *Vec3 {
+	return r.Direction.SMul(t).AddSet(r.Origin)
 }

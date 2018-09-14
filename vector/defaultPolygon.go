@@ -1,8 +1,6 @@
 package vector
 
-type Polygon struct {
-	points []Vec3
-}
+type Polygon []Vec3
 
 type errorNotCoplanar string
 
@@ -14,13 +12,10 @@ func NewPolygon(from []Vec3) (*Polygon, error) {
 	if !Coplanar(from) {
 		return nil, ErrorNotCoplanar
 	}
-	return &Polygon{from}, nil
+	p := Polygon(from)
+	return &p, nil
 }
 
 func (p Polygon) Normal(to Vec3) (dir Vec3, invAble bool) {
-	return normalNoCheck(p.points[0], p.points[1], p.points[2])
-}
-
-func (p Polygon) Color() Vec3 {
-	return Vec3{200, 200, 200}
+	return normalNoCheck(p[0], p[1], p[2])
 }

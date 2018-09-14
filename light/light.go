@@ -29,5 +29,5 @@ func (p PointLight) Color() v.Vec3 {
 }
 
 func (p PointLight) LightTo(point v.Vec3) (dir v.Vec3, canIllum bool) {
-	return v.Unit(v.Sub(p.Center, point)), true
+	return *p.Center.Sub(point).UnitSet(), true
 }

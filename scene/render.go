@@ -46,11 +46,11 @@ func (s Scene) Render() *image.RGBA {
 			for c := range work {
 				xDir := (2*((c.x+0.5)*invWidth) - 1) * angle * aspectRatio
 				yDir := (1 - 2*((c.y+0.5)*invHeight)) * angle
-				direction := v.Unit(v.Sub(v.Vec3{xDir, yDir, -1}, s.Camera.Location()))
+				direction := *(v.Vec3{xDir, yDir, -1}).Sub(s.Camera.Location()).UnitSet()
 				out <- fieldColor{
 					int(c.x),
 					int(c.y),
-					s.IntersectionFunction(*v.NewRay(v.Origin, direction), s),
+					s.IntersectionFunction(*v.NewRay(v.Origin, direction), s).ToImageColor(),
 				}
 				atomic.AddInt64(&count, 1)
 			}

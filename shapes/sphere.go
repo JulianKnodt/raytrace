@@ -18,7 +18,7 @@ func NewSphere(center v.Vec3, radius float64, mat *m.Material) *Sphere {
 }
 
 func (s Sphere) NormalAt(p v.Vec3) (v.Vec3, bool) {
-	return v.Sub(p, s.center), false
+	return *p.Sub(s.center), false
 }
 
 func (s Sphere) MaterialAt(v.Vec3) *m.Material {
@@ -26,12 +26,12 @@ func (s Sphere) MaterialAt(v.Vec3) *m.Material {
 }
 
 func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
-	center := v.Sub(s.center, r.Origin)
-	toNormal := v.Dot(center, r.Direction)
+	center := s.center.Sub(r.Origin)
+	toNormal := center.Dot(r.Direction)
 	if toNormal < 0 {
 		return a, nil
 	}
-	distSqr := v.Dot(center, center) - toNormal*toNormal
+	distSqr := center.SqrMagn() - toNormal*toNormal
 	if distSqr > s.radiusSqr {
 		return a, nil
 	}
@@ -50,7 +50,7 @@ func (s Sphere) Intersects(r v.Ray) (a float64, shape obj.SurfaceElement) {
 // https://gamedev.stackexchange.com/questions/114412/how-to-get-uv-coordinates-for-sphere-cylindrical-projection
 func (s Sphere) TextureCoordinates(vec v.Vec3) (u, v float64) {
 	// https://github.com/fogleman/pt/blob/master/pt/sphere.go
-	n := vec.Sub(s.center).Unit()
+	n := *vec.Sub(s.center).UnitSet()
 	return math.Atan2(n[0], n[2])/(2*math.Pi) + 0.5,
 		0.5 - n[1]*0.5
 	//	return 1 - (math.Pi+math.Atan2(radial[2], radial[0]))/(2*math.Pi),
@@ -58,16 +58,17 @@ func (s Sphere) TextureCoordinates(vec v.Vec3) (u, v float64) {
 }
 
 func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
-	centerDiff := v.Sub(r.Origin, s.center)
-	a := v.SqrMagn(r.Direction)
-	b := 2 * v.Dot(r.Direction, centerDiff)
-	c := v.SqrMagn(centerDiff) - s.radiusSqr
+	centerDiff := r.Origin.Sub(s.center)
+	centerSqrMgn := centerDiff.SqrMagn()
+	a := r.Direction.SqrMagn()
+	b := 2 * centerDiff.Dot(r.Direction)
+	c := centerSqrMgn - s.radiusSqr
 	discrim := (b * b) - (4 * a * c)
 	if discrim < 0 || a == 0 {
 		return t, nil
 	}
 
-	if v.SqrMagn(centerDiff) <= s.radiusSqr {
+	if centerSqrMgn <= s.radiusSqr {
 		return t, nil
 	}
 

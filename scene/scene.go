@@ -1,12 +1,11 @@
 package scene
 
 import (
-	"image/color"
 	"os"
 
 	"raytrace/camera"
+	"raytrace/color"
 	"raytrace/lib/sky"
-	"raytrace/light"
 	"raytrace/obj"
 	"raytrace/object"
 	"raytrace/octree"
@@ -14,14 +13,14 @@ import (
 	v "raytrace/vector"
 )
 
-type Intersector func(v.Ray, Scene) color.Color
+type Intersector func(v.Ray, Scene) *color.Normalized
 
 type Scene struct {
 	Height               float64
 	Width                float64
 	Objects              []object.Object
 	Camera               camera.Camera
-	Lights               []light.Light
+	Lights               []object.Object
 	Sky                  sky.Sky
 	IntersectionFunction Intersector
 }
@@ -85,4 +84,15 @@ func (s *Scene) AddSky(filename string) error {
 
 	s.Sky = *newSky
 	return nil
+}
+
+func (s *Scene) AddLights() {
+	if s.Lights == nil {
+		s.Lights = []object.Object{}
+	}
+	for _, v := range s.Objects {
+		if ls, ok := v.(object.LightSource); ok && ls.EmitsLight() {
+			s.Lights = append(s.Lights, v)
+		}
+	}
 }

@@ -2,7 +2,6 @@ package obj
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"testing"
 )
@@ -19,9 +18,8 @@ func TestIndexedTriangleList(t *testing.T) {
 		t.Error(err)
 	}
 
-	b, err := json.Marshal(obj.IndexedTriangleList())
+	_, err = json.Marshal(obj.IndexedTriangleList())
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(string(b))
 }

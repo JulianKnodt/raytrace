@@ -12,6 +12,6 @@ func AngleBetween(a, b Vec3) float64 {
 
 // Scales up such that the angle
 // between dir + result and dir is equal to angle
-func AngleVector(dir, up Vec3, angle float64) Vec3 {
+func AngleVector(dir, up Vec3, angle float64) *Vec3 {
 	return up.SMul(math.Tan(angle) * dir.Magn())
 }

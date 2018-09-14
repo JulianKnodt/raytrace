@@ -64,11 +64,11 @@ type MTL struct {
 	Ks [3]float64
 	Ke [3]float64
 	// Dissolve factor aka opacity
-	D float64
+	D *float64
 	// TODO transmission filter
 	Tf float64
-	// TODO label // is this even in the spec???
-	Tr [3]float64
+	// inverse of d
+	Tr float64
 
 	// Specular Exponent
 	Ns float64
@@ -135,8 +135,8 @@ func Decode(file *os.File) (out map[string]*MTL, err error) {
 			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%d", &illum)
 			m.Illum = CoerceMode(illum)
 		case "d": // dissolve
-			var dissolve float64
-			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &dissolve)
+			dissolve := new(float64)
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", dissolve)
 			m.D = dissolve
 		case "Ns", "ns":
 			var ns float64
@@ -150,6 +150,9 @@ func Decode(file *os.File) (out map[string]*MTL, err error) {
 		case "Material", "material":
 		case "Tr", "tr":
 			// TODO
+			var transparency float64
+			_, err = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &transparency)
+			m.Tr = transparency
 
 		// Mapping
 

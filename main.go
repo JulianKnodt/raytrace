@@ -6,7 +6,6 @@ import (
 	"image/png"
 	"os"
 	"raytrace/camera"
-	"raytrace/light"
 	"raytrace/scene"
 	v "raytrace/vector"
 
@@ -41,9 +40,6 @@ func main() {
 		Width:                *width,
 		IntersectionFunction: intersector(),
 		Camera:               camera.DefaultCamera(),
-		Lights: []light.Light{
-			light.PointLight{RadiantColor: v.Vec3{10, 10, 10}, Center: v.Vec3{255, 255, 255}},
-		},
 	}
 
 	defer cprofile()()
@@ -53,6 +49,7 @@ func main() {
 	if *cpuprofile != "" {
 
 	}
+	scene.AddLights()
 	img := scene.Render()
 
 	file, _ := os.OpenFile(*out, os.O_WRONLY|os.O_CREATE, 0600)

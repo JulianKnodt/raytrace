@@ -14,7 +14,7 @@ type Plane struct {
 
 // should be open to other constructions
 func NewPlane(p, norm v.Vec3, mat *m.Material) *Plane {
-	return &Plane{p, v.Unit(norm), mat}
+	return &Plane{p, *norm.Unit(), mat}
 }
 
 func (p Plane) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
@@ -22,7 +22,7 @@ func (p Plane) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
 	if denom == 0 {
 		return -1, nil
 	}
-	param := v.Dot(v.Sub(p.point, r.Origin), p.norm) / denom
+	param := p.point.Sub(r.Origin).Dot(p.norm) / denom
 	if param < 0 {
 		return param, nil
 	}

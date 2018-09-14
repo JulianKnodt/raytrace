@@ -1,10 +1,11 @@
 package vector
 
-func SMul(k float64, v Vec3) (r Vec3) {
-	r[0] = k * v[0]
-	r[1] = k * v[1]
-	r[2] = k * v[2]
-	return
+func SMul(k float64, v Vec3) *Vec3 {
+	return &Vec3{
+		k * v[0],
+		k * v[1],
+		k * v[2],
+	}
 }
 
 func SMulSet(k float64, dst *Vec3) {
@@ -13,7 +14,7 @@ func SMulSet(k float64, dst *Vec3) {
 	dst[2] = k * dst[2]
 }
 
-func (v Vec3) SMul(k float64) Vec3 {
+func (v Vec3) SMul(k float64) *Vec3 {
 	return SMul(k, v)
 }
 

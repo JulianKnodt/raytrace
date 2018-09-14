@@ -1,13 +1,14 @@
 package scene
 
 import (
-	"image/color"
 	"math"
+
+	"raytrace/color"
 	"raytrace/object"
 	v "raytrace/vector"
 )
 
-func Basic(r v.Ray, s Scene) color.Color {
+func Basic(r v.Ray, s Scene) *color.Normalized {
 	maxDist := math.Inf(1)
 	var near object.SurfaceElement
 	for _, o := range s.Objects {
@@ -22,5 +23,5 @@ func Basic(r v.Ray, s Scene) color.Color {
 	if near == nil {
 		return nil
 	}
-	return color.White
+	return &color.White
 }

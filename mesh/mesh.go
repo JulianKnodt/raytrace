@@ -26,7 +26,8 @@ func (m Mesh) FaceN(n int) []v.Vec3 {
 
 func (m Mesh) MaterialN(n int) *mat.Material {
 	material := &mat.Material{
-		Emissive: color.FromNormalized(123, 123, 123, 255),
+		Ambient: color.FromNormalized(123, 123, 123, 255),
+		Diffuse: color.FromNormalized(123, 123, 123, 255),
 	}
 	if len(m.Materials) > n {
 		material = m.Materials[n]

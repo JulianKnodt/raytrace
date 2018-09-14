@@ -1,10 +1,9 @@
+bin: fmt
+	go build
 
 fmt:
-	go fmt ./...
-	go vet ./...
-
-bin: fmt 
-	go build
+	@go fmt ./...
+	@go vet ./...
 
 test: fmt
 	go test ./...
@@ -17,7 +16,7 @@ bench: fmt
 
 diff-off: bin
 	./raytrace -off=off/testdata/dragon.off -shift="0 0 -2" -out=testdata/differ.png
-	diff testdata/differ.png testdata/og.png
+	diff testdata/differ.png testdata/og_off.png
 	rm testdata/differ.png
 
 diff-obj: bin
