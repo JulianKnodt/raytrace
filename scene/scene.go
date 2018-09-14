@@ -3,6 +3,7 @@ package scene
 import (
 	"os"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/camera"
 	"raytrace/color"
 	"raytrace/lib/sky"
@@ -10,7 +11,6 @@ import (
 	"raytrace/object"
 	"raytrace/octree"
 	"raytrace/off"
-	v "raytrace/vector"
 )
 
 type Intersector func(v.Ray, Scene) *color.Normalized

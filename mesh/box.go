@@ -3,8 +3,8 @@ package mesh
 import (
 	"math"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/bounding"
-	v "raytrace/vector"
 )
 
 func (m Mesh) Box() bounding.Box {

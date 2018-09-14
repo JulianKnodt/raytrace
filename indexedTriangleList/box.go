@@ -3,8 +3,8 @@ package indexedTriangleList
 import (
 	"math"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/bounding"
-	v "raytrace/vector"
 )
 
 func (i IndexedTriangleList) Box() bounding.Box {

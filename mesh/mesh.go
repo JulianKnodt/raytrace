@@ -1,12 +1,12 @@
 package mesh
 
 import (
+	v "github.com/julianknodt/vector"
 	"math"
 	"raytrace/color"
 	mat "raytrace/material"
 	obj "raytrace/object"
 	"raytrace/shapes"
-	v "raytrace/vector"
 )
 
 type Mesh struct {

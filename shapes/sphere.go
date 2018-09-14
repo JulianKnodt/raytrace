@@ -1,10 +1,10 @@
 package shapes
 
 import (
+	v "github.com/julianknodt/vector"
 	"math"
 	m "raytrace/material"
 	obj "raytrace/object"
-	v "raytrace/vector"
 )
 
 type Sphere struct {

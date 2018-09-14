@@ -1,9 +1,9 @@
 package octree
 
 import (
+	v "github.com/julianknodt/vector"
 	"math"
 	"raytrace/object"
-	v "raytrace/vector"
 )
 
 func (o Octree) Intersects(r v.Ray) (float64, object.SurfaceElement) {

@@ -1,8 +1,8 @@
 package object
 
 import (
+	v "github.com/julianknodt/vector"
 	m "raytrace/material"
-	v "raytrace/vector"
 )
 
 type SurfaceElement interface {

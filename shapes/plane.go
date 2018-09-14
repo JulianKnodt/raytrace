@@ -1,9 +1,9 @@
 package shapes
 
 import (
+	v "github.com/julianknodt/vector"
 	m "raytrace/material"
 	obj "raytrace/object"
-	v "raytrace/vector"
 )
 
 type Plane struct {

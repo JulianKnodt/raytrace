@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	v "github.com/julianknodt/vector"
 	"io"
 	"raytrace/mesh"
-	v "raytrace/vector"
 	"strconv"
 	"strings"
 )

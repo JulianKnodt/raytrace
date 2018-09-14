@@ -3,10 +3,10 @@ package shapes
 import (
 	"math"
 
+	vec "github.com/julianknodt/vector"
 	"raytrace/bounding"
 	m "raytrace/material"
 	obj "raytrace/object"
-	vec "raytrace/vector"
 )
 
 // Represents a triangle with a material and textured vertices

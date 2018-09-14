@@ -1,7 +1,7 @@
 package material
 
 import (
-	v "raytrace/vector"
+	v "github.com/julianknodt/vector"
 )
 
 // Sampleable is meant to be implemented by surface elements

@@ -3,11 +3,11 @@ package scene
 import (
 	"math"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/color"
 	mat "raytrace/material"
 	texture "raytrace/material/texture"
 	"raytrace/object"
-	v "raytrace/vector"
 )
 
 func Direct(r v.Ray, s Scene) *color.Normalized {

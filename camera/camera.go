@@ -1,7 +1,7 @@
 package camera
 
 import (
-	v "raytrace/vector"
+	v "github.com/julianknodt/vector"
 )
 
 var DefaultCameraDir = v.Vec3{0, 0, -1}

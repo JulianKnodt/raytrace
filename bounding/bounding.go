@@ -3,7 +3,7 @@ package bounding
 import (
 	"math"
 
-	v "raytrace/vector"
+	v "github.com/julianknodt/vector"
 )
 
 // A box which is aligned with the axis

@@ -1,7 +1,7 @@
 package color
 
 import (
-	v "raytrace/vector"
+	v "github.com/julianknodt/vector"
 )
 
 var DefaultColor = Normalized{

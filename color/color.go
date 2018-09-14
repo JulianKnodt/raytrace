@@ -1,8 +1,8 @@
 package color
 
 import (
+	v "github.com/julianknodt/vector"
 	"image/color"
-	v "raytrace/vector"
 )
 
 // A representation of a color w/ RGB values

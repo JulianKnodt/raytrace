@@ -1,11 +1,11 @@
 package indexedTriangleList
 
 import (
+	v "github.com/julianknodt/vector"
 	"math"
 	"raytrace/material"
 	obj "raytrace/object"
 	"raytrace/shapes"
-	v "raytrace/vector"
 )
 
 type FaceInfo struct {

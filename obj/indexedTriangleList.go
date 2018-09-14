@@ -1,8 +1,8 @@
 package obj
 
 import (
+	vec "github.com/julianknodt/vector"
 	itl "raytrace/indexedTriangleList"
-	vec "raytrace/vector"
 )
 
 func (o Obj) IndexedTriangleList() *itl.IndexedTriangleList {

@@ -2,12 +2,12 @@ package scene
 
 import (
 	"fmt"
+	v "github.com/julianknodt/vector"
 	"image"
 	"image/color"
 	"math"
 	"raytrace/light"
 	obj "raytrace/object"
-	v "raytrace/vector"
 	"runtime"
 	"sync/atomic"
 	"time"

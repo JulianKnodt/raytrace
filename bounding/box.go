@@ -1,8 +1,8 @@
 package bounding
 
 import (
+	v "github.com/julianknodt/vector"
 	"math"
-	v "raytrace/vector"
 )
 
 type Box struct {

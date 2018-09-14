@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	v "github.com/julianknodt/vector"
 	"image/png"
 	"os"
 	"raytrace/camera"
 	"raytrace/scene"
-	v "raytrace/vector"
 
 	"runtime/pprof"
 )

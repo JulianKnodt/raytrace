@@ -3,9 +3,9 @@ package scene
 import (
 	"math"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/color"
 	"raytrace/object"
-	v "raytrace/vector"
 )
 
 func Basic(r v.Ray, s Scene) *color.Normalized {
