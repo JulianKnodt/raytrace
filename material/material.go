@@ -35,7 +35,7 @@ func (m *Material) Emitted() color.Normalized {
 
 func (m *Material) Ambience() color.Normalized {
 	if m == nil {
-		return color.Blank
+		return color.DefaultColor
 	}
 	return m.Ambient
 }

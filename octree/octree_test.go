@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
+	v "github.com/julianknodt/vector"
 	"raytrace/bounding"
 	"raytrace/shapes"
-	v "raytrace/vector"
 )
 
 func RandomItem() OctreeItem {

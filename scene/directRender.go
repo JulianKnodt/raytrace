@@ -38,7 +38,7 @@ func Direct(r v.Ray, s Scene) *color.Normalized {
 	bounce := *v.NewRay(*inter, normalInter)
 
 	// Ambient color is always regarded regardless of light
-	var c *color.Normalized
+	c := new(color.Normalized)
 	*c = material.Ambience()
 	if s, ok := near.(mat.Sampleable); ok && material != nil && material.AmbientTexture != nil {
 		u, v := s.TextureCoordinates(*inter)

@@ -35,5 +35,5 @@ func Sample(t Texture, u, v float64) c.Normalized {
 	x := int(float64(bounds.Dx()) * u)
 	y := int(float64(bounds.Dy()) * v)
 
-	return c.FromColor(t.At(x, y))
+	return *c.FromColor(t.At(x, y))
 }

@@ -19,9 +19,9 @@ const maxUint8 = 0xFF
 const maxUint16 = 0xFFFF
 const maxUint32 = 0xFFFFFFFF
 
-func FromColor(c color.Color) Normalized {
+func FromColor(c color.Color) *Normalized {
 	rgba := color.RGBA64Model.Convert(c).(color.RGBA64)
-	return Normalized{
+	return &Normalized{
 		v.Vec3{
 			float64(rgba.R) / maxUint16, float64(rgba.G) / maxUint16, float64(rgba.B) / maxUint16,
 		},
@@ -42,13 +42,16 @@ func (n Normalized) Uint8() v.Vec3 {
 	return *n.RGB.SMul(maxUint8)
 }
 
-func (r Normalized) ToImageColor() color.RGBA {
-	scaled := r.Uint8()
+func (n *Normalized) ToImageColor() color.RGBA {
+	if n == nil {
+		return color.RGBA{0, 0, 0, 0}
+	}
+	scaled := n.Uint8()
 	out := color.RGBA{
 		R: uint8(scaled[0]),
 		G: uint8(scaled[1]),
 		B: uint8(scaled[2]),
-		A: uint8(r.A * maxUint8),
+		A: uint8(n.A * maxUint8),
 	}
 	return out
 }

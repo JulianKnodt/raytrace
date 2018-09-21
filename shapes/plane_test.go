@@ -2,7 +2,7 @@ package shapes
 
 import (
 	"fmt"
-	v "raytrace/vector"
+	v "github.com/julianknodt/vector"
 	"testing"
 )
 

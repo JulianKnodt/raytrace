@@ -32,6 +32,10 @@ type fieldColor struct {
 // with the given objects using 'inter' intersection
 // algorithm choice
 func (s Scene) Render() *image.RGBA {
+	switch {
+	case s.IntersectionFunction == nil:
+		panic("Nil intersection function")
+	}
 	img := image.NewRGBA(image.Rect(0, 0, int(s.Width), int(s.Height)))
 	var invWidth float64 = 1.0 / s.Width
 	var invHeight float64 = 1.0 / s.Height
@@ -50,7 +54,9 @@ func (s Scene) Render() *image.RGBA {
 				out <- fieldColor{
 					int(c.x),
 					int(c.y),
-					s.IntersectionFunction(*v.NewRay(v.Origin, direction), s).ToImageColor(),
+					s.IntersectionFunction(
+						*v.NewRay(v.Origin, direction), s,
+					).ToImageColor(),
 				}
 				atomic.AddInt64(&count, 1)
 			}

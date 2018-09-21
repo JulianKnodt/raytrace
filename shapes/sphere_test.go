@@ -2,8 +2,8 @@ package shapes
 
 import (
 	"fmt"
+	v "github.com/julianknodt/vector"
 	m "raytrace/material"
-	v "raytrace/vector"
 	"testing"
 )
 
