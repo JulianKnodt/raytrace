@@ -25,7 +25,7 @@ type Material struct {
 	AmbientTexture texture.Texture
 	DiffuseTexture texture.Texture
 
-  *Scatter
+	RenderType Scatter
 }
 
 func (m *Material) Emitted() color.Normalized {
@@ -53,11 +53,10 @@ func (m *Material) IsLighting() bool {
 	switch {
 	case m == nil:
 
-  // Checking if there is some Emission of light
+		// Checking if there is some Emission of light
 	case m.Emissive.A > 0:
 		return true
 
 	}
 	return false
 }
-
