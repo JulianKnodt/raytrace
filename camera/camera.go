@@ -87,3 +87,17 @@ func DefaultCamera() Camera {
 		Height:         800,
 	}
 }
+
+// Returns ray from camera position to [0,1], [0, 1] in its viewing box
+func (c Camera) RayTo(x, y float64) v.Ray {
+
+	// have to divide by 2 since it extends in both directions
+	hComp := c.Right.SMul(c.Width / 2).LerpInvSet(x)
+	vComp := c.Up.SMul(c.Height / 2).LerpInvSet(y)
+
+	return *v.NewRay(c.Transform.Origin,
+		*c.Transform.Direction.SMul(c.RenderDistance).
+			AddSet(*hComp).
+			AddSet(*vComp),
+	)
+}

@@ -16,7 +16,7 @@ type Material struct {
 	Emissive color.Normalized
 	// Specular color.Normalized will be ignored for now...
 
-	// [0, 1], for fully transparent(in which case why're you rendering this)
+	// [0, 1], 0 fully transparent(in which case why're you rendering this)
 	// or fully opaque
 	Transparency float64
 
@@ -24,6 +24,8 @@ type Material struct {
 
 	AmbientTexture texture.Texture
 	DiffuseTexture texture.Texture
+
+  *Scatter
 }
 
 func (m *Material) Emitted() color.Normalized {
@@ -46,3 +48,16 @@ func (m *Material) Diffusive() color.Normalized {
 	}
 	return m.Diffuse
 }
+
+func (m *Material) IsLighting() bool {
+	switch {
+	case m == nil:
+
+  // Checking if there is some Emission of light
+	case m.Emissive.A > 0:
+		return true
+
+	}
+	return false
+}
+

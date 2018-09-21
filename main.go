@@ -25,11 +25,11 @@ var (
 )
 
 // global variables for this scope
-var (
-	x, y, z float64
-)
 
 func main() {
+	var (
+		x, y, z float64
+	)
 	off := flag.String("off", "", "Off file to render")
 	obj := flag.String("obj", "", "Obj file to render")
 	flag.Parse()
@@ -46,9 +46,6 @@ func main() {
 	scene.AddObj(*obj, v.Vec3{x, y, z})
 	scene.AddOff(*off, v.Vec3{x, y, z})
 	scene.AddSky(*skyFile)
-	if *cpuprofile != "" {
-
-	}
 	scene.AddLights()
 	img := scene.Render()
 

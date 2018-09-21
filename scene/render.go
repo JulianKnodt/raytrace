@@ -6,7 +6,6 @@ import (
 	"image"
 	"image/color"
 	"math"
-	"raytrace/light"
 	obj "raytrace/object"
 	"runtime"
 	"sync/atomic"
@@ -15,7 +14,7 @@ import (
 
 const epsilon = 1e-6
 
-type intersect func(v.Vec3, v.Vec3, []obj.Object, []light.Light) color.Color
+type intersect func(v.Vec3, v.Vec3, []obj.Object, []obj.Object) color.Color
 
 type coord struct {
 	x float64

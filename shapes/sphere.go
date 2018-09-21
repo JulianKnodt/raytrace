@@ -88,3 +88,7 @@ func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
 	shape = s
 	return
 }
+
+func (s Sphere) EmitsLight() bool {
+	return s.Material.IsLighting()
+}
