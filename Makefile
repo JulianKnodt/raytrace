@@ -29,3 +29,6 @@ todos:
 
 sources:
 	grep -rn . --binary-files=without-match -e "http" | sort | uniq
+
+only-sources:
+	grep -hrn . --binary-files=without-match -e "http" | sort | uniq
