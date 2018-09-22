@@ -5,7 +5,6 @@ import (
 	v "github.com/julianknodt/vector"
 	"image"
 	"image/color"
-	"math"
 	obj "raytrace/object"
 	"runtime"
 	"sync/atomic"
@@ -17,8 +16,8 @@ const epsilon = 1e-6
 type intersect func(v.Vec3, v.Vec3, []obj.Object, []obj.Object) color.Color
 
 type coord struct {
-	x float64
-	y float64
+	x int
+	y int
 }
 
 type fieldColor struct {
@@ -36,10 +35,6 @@ func (s Scene) Render() *image.RGBA {
 		panic("Nil intersection function")
 	}
 	img := image.NewRGBA(image.Rect(0, 0, int(s.Width), int(s.Height)))
-	var invWidth float64 = 1.0 / s.Width
-	var invHeight float64 = 1.0 / s.Height
-	aspectRatio := s.Width * invHeight
-	angle := math.Tan(math.Pi * 0.5 * s.Camera.FOV / 180)
 	out := make(chan fieldColor, int(s.Height*s.Width))
 	work := make(chan coord, int(s.Height*s.Width))
 	count := int64(0)
@@ -47,14 +42,11 @@ func (s Scene) Render() *image.RGBA {
 	for i := 0; i < runtime.NumCPU(); i++ {
 		go func() {
 			for c := range work {
-				xDir := (2*((c.x+0.5)*invWidth) - 1) * angle * aspectRatio
-				yDir := (1 - 2*((c.y+0.5)*invHeight)) * angle
-				direction := *(v.Vec3{xDir, yDir, -1}).Sub(s.Camera.Location()).UnitSet()
 				out <- fieldColor{
-					int(c.x),
-					int(c.y),
+					c.x, c.y,
 					s.IntersectionFunction(
-						*v.NewRay(v.Origin, direction), s,
+						s.Camera.RayTo(float64(c.x)/s.Width, float64(c.y)/s.Height),
+						s,
 					).ToImageColor(),
 				}
 				atomic.AddInt64(&count, 1)
@@ -64,7 +56,7 @@ func (s Scene) Render() *image.RGBA {
 
 	for y := 0.0; y < s.Height; y++ {
 		for x := 0.0; x < s.Width; x++ {
-			work <- coord{x, y}
+			work <- coord{int(x), int(y)}
 		}
 	}
 	close(work)

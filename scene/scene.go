@@ -16,8 +16,8 @@ import (
 type Intersector func(v.Ray, Scene) *color.Normalized
 
 type Scene struct {
-	Height               float64
-	Width                float64
+	Height               float64 // This is resulting image height
+	Width                float64 // This is resulting image width
 	Objects              []object.Object
 	Camera               camera.Camera
 	Lights               []object.Object

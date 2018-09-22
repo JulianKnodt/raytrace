@@ -18,9 +18,6 @@ type Camera struct {
 	// Computed and not meant to be changed directly
 	Right v.Vec3
 
-	// Radians of range
-	FOV float64
-
 	// The distance that the camera renders pixels from the camera
 	RenderDistance float64
 
@@ -44,7 +41,6 @@ func NewCamera(position, direction, up v.Vec3,
 		Transform:      *v.NewRay(position, direction),
 		Up:             *up.Unit(),
 		Right:          *direction.Cross(up).UnitSet(),
-		FOV:            fieldOfView,
 		RenderDistance: renderDistance,
 		Width:          float64(width),
 		Height:         float64(height),
@@ -81,10 +77,9 @@ func DefaultCamera() Camera {
 		Transform:      v.Ray{Origin: v.Origin, Direction: v.Vec3{0, 0, -1}},
 		Up:             v.Vec3{0, 1, 0},
 		Right:          v.Vec3{1, 0, 0},
-		FOV:            30,
 		RenderDistance: 1.0,
-		Width:          600,
-		Height:         800,
+		Width:          10, // This is world space
+		Height:         10, // This is world space
 	}
 }
 
@@ -92,8 +87,8 @@ func DefaultCamera() Camera {
 func (c Camera) RayTo(x, y float64) v.Ray {
 
 	// have to divide by 2 since it extends in both directions
-	hComp := c.Right.SMul(c.Width / 2).LerpInvSet(x)
-	vComp := c.Up.SMul(c.Height / 2).LerpInvSet(y)
+	hComp := c.Right.SMul(c.Width / 2).SMulSet(1-2*x)
+	vComp := c.Up.SMul(c.Height / 2).SMulSet(1-2*y)
 
 	return *v.NewRay(c.Transform.Origin,
 		*c.Transform.Direction.SMul(c.RenderDistance).

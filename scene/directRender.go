@@ -33,7 +33,7 @@ func Direct(r v.Ray, s Scene) *color.Normalized {
 	inter := r.Origin.Add(*r.Direction.SMul(maxDist))
 	normalInter, _ := near.NormalAt(*inter)
 	material := near.MaterialAt(*inter)
-	v.UnitSet(&normalInter)
+	normalInter.UnitSet()
 	inter.AddSet(*normalInter.SMul(epsilon))
 	bounce := *v.NewRay(*inter, normalInter)
 
