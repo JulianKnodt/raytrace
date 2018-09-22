@@ -15,7 +15,7 @@ import (
 // 🎌
 var (
 	width      = flag.Float64("width", 800.0, "Width to render")
-	height     = flag.Float64("height", 600.0, "Height to render")
+	height     = flag.Float64("height", 800.0, "Height to render")
 	out        = flag.String("out", "out.png", "Filepath of out file when rendering one scene")
 	cpuprofile = flag.String("cpuprofile", "", "CPU Profile rendering")
 	//	memprofile      = flag.String("memprofile", "", "Mem Profile rendering")
@@ -25,11 +25,11 @@ var (
 )
 
 // global variables for this scope
+var (
+	x, y, z float64
+)
 
 func main() {
-	var (
-		x, y, z float64
-	)
 	off := flag.String("off", "", "Off file to render")
 	obj := flag.String("obj", "", "Obj file to render")
 	flag.Parse()

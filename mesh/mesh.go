@@ -51,7 +51,6 @@ func (m Mesh) Edges() (count int) {
 }
 
 func (m Mesh) Intersects(r v.Ray) (float64, obj.SurfaceElement) {
-	println("here???")
 	min := math.Inf(1)
 	var shape obj.SurfaceElement
 	for i := 0; i < m.Faces(); i++ {

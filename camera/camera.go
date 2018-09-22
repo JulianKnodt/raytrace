@@ -59,25 +59,12 @@ func (c Camera) InverseHeight() float64 {
 	return 1 / c.Height
 }
 
-// To returns a vector that points to the center of the pixel where x and y
-// would be in the image TODO
-func (c Camera) To(x, y int) *v.Ray {
-	ndcX := (float64(x) + 0.5) / c.Width
-	ndcY := (float64(y) + 0.5) / c.Height
-	rasterizedX := (2*ndcX - 1) * c.AspectRatio()
-	rasterizedY := 1 + 2*ndcY
-	dir := *c.Transform.At(c.RenderDistance).
-		AddSet(*c.Up.SMul(-rasterizedX)).
-		AddSet(*c.Right.SMul(rasterizedY))
-	return v.NewRay(c.Transform.Origin, dir)
-}
-
 func DefaultCamera() Camera {
 	return Camera{
-		Transform:      v.Ray{Origin: v.Origin, Direction: v.Vec3{0, 0, -1}},
+		Transform:      v.Ray{Origin: v.Vec3{0, 0, 0}, Direction: v.Vec3{0, 0, -1}},
 		Up:             v.Vec3{0, 1, 0},
 		Right:          v.Vec3{1, 0, 0},
-		RenderDistance: 1.0,
+		RenderDistance: 0,
 		Width:          10, // This is world space
 		Height:         10, // This is world space
 	}
