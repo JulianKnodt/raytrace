@@ -15,12 +15,12 @@ bench: fmt
 	go test ./... -bench=. -benchmem
 
 diff-off: bin
-	./raytrace -off=off/testdata/dragon.off -shift="0 0 -2" -out=testdata/differ.png
+	./raytrace -off=off/testdata/dragon.off -shift="0 0 -0.5" -out=testdata/differ.png
 	diff testdata/differ.png testdata/og_off.png
 	rm testdata/differ.png
 
 diff-obj: bin
-	./raytrace -obj=obj/testdata/teapot.obj -shift="0 -2 0" -out=testdata/differ_obj.png
+	./raytrace -obj=obj/testdata/teapot.obj -shift="0 -2 -3" -out=testdata/differ_obj.png
 	diff testdata/differ_obj.png testdata/og_obj.png
 	rm testdata/differ_obj.png
 

@@ -20,7 +20,7 @@ type pixel struct {
 }
 
 type fieldColor struct {
-	p pixel
+	p     pixel
 	color color.Color
 }
 

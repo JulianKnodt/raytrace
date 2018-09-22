@@ -64,9 +64,9 @@ func DefaultCamera() Camera {
 		Transform:      v.Ray{Origin: v.Vec3{0, 0, 0}, Direction: v.Vec3{0, 0, -1}},
 		Up:             v.Vec3{0, 1, 0},
 		Right:          v.Vec3{1, 0, 0},
-		RenderDistance: 0,
-		Width:          10, // This is world space
-		Height:         10, // This is world space
+		RenderDistance: 1,
+		Width:          5, // This is world space
+		Height:         5, // This is world space
 	}
 }
 
