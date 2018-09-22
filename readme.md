@@ -1,15 +1,13 @@
 # raytrace
 
-A simple raytracer implemented in go
+A raytracer implemented in golang for rendering off and obj files.
 
-## What it does
+It uses octrees and bounding boxes in order to optimize the speed with which intersections
+must be checked, and also allows for more implementations of intersection algorithms.
 
-It draws an image using the standard ray tracing algorithm from the camera
+---
 
-## To add:
+# Sample Outputs
 
-- Optimizations for SIMD for vec3
-- GPU Optimizations using cgo
-- Moving the camera
-- Object Transformations
-- Better APIs
+![Dragon](./outputs/dragon.png)
+![Teapot](./outputs/teapot.png)

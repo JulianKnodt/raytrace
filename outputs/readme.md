@@ -1,4 +1,7 @@
-# Failures
+# Outputs
 
-Currently this just has a bunch of cool failures from the project while building it up
+A mixture of cool looking outputs and cool looking mishaps that occurred while creating the
+project.
+
+Sometimes the mistakes are just as elegant as the successes.
 
