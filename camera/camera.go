@@ -87,8 +87,8 @@ func DefaultCamera() Camera {
 func (c Camera) RayTo(x, y float64) v.Ray {
 
 	// have to divide by 2 since it extends in both directions
-	hComp := c.Right.SMul(c.Width / 2).SMulSet(1-2*x)
-	vComp := c.Up.SMul(c.Height / 2).SMulSet(1-2*y)
+	hComp := c.Right.SMul((1 - 2*x) * c.Width / 2)
+	vComp := c.Up.SMul((1 - 2*y) * c.Height / 2)
 
 	return *v.NewRay(c.Transform.Origin,
 		*c.Transform.Direction.SMul(c.RenderDistance).

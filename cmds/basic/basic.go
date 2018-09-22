@@ -22,7 +22,7 @@ func main() {
 	}
 	scene := scene.Scene{
 		Height:               1000.0,
-		Width:                1200.0,
+		Width:                2000.0,
 		IntersectionFunction: scene.Direct,
 		Camera:               camera.DefaultCamera(),
 		Objects:              objects,
