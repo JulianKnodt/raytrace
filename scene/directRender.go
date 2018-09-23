@@ -22,20 +22,19 @@ func Direct(r v.Ray, s Scene) *color.Normalized {
 		}
 	}
 
-	if near == nil {
+	switch {
+	case near == nil:
 		return nil
-	}
-
-	if maxDist < 0 {
+	case maxDist < 0:
 		panic("something behind the camera is supposed to be visible")
 	}
 
 	inter := r.Origin.Add(*r.Direction.SMul(maxDist))
-	normalInter, _ := near.NormalAt(*inter)
+	normalInter, invertable := near.NormalAt(*inter)
 	material := near.MaterialAt(*inter)
+	n := *v.NewRay(*inter, normalInter)
 	normalInter.UnitSet()
 	inter.AddSet(*normalInter.SMul(epsilon))
-	bounce := *v.NewRay(*inter, normalInter)
 
 	// Ambient color is always regarded regardless of light
 	c := new(color.Normalized)
@@ -46,12 +45,39 @@ func Direct(r v.Ray, s Scene) *color.Normalized {
 	}
 
 	for _, l := range s.Lights {
-		t, surfel := l.Intersects(bounce)
-		if surfel == nil {
-			continue
+		origins := l.LightOrigins()
+
+	lightSources:
+		for _, origin := range origins {
+			light := *v.NewRayFrom(*origin, *inter)
+			facingSimilarly := normalInter.Dot(light.Direction)
+
+			switch {
+			case facingSimilarly < 0 && invertable:
+				facingSimilarly = -facingSimilarly
+			case facingSimilarly <= 0:
+				c = c.Mix(color.Black)
+				continue
+			}
+
+			// Check if it's obstructed
+			for _, o := range s.Objects {
+				if _, intersecting := o.Intersects(light); intersecting != nil {
+					c = c.Mix(color.Black)
+					continue lightSources
+				}
+			}
+
+			if material.DoesReflect() {
+				reflection := Direct(*v.NewRay(*inter, *r.Direction.Reflection(normalInter)), s)
+				if reflection != nil {
+					c = c.Mix(*reflection)
+				}
+			}
+			c = c.MixVec(
+				*l.Emitted().RGB.
+					SMul(material.SurfaceBRDF().BidirectionalRadianceDistribution(n, light, r)))
 		}
-		mat := surfel.MaterialAt(*bounce.At(t))
-		c.Mix(mat.Emitted())
 	}
 	return c
 }

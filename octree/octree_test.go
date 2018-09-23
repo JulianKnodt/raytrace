@@ -12,7 +12,7 @@ import (
 )
 
 func RandomItem() OctreeItem {
-	return shapes.NewTriangle(v.RandomVector(), v.RandomVector(), v.RandomVector(), nil)
+	return shapes.NewTriangle(*v.RandomVector(), *v.RandomVector(), *v.RandomVector(), nil)
 }
 
 func TestOctree(t *testing.T) {

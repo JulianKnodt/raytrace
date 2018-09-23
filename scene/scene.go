@@ -20,7 +20,7 @@ type Scene struct {
 	Width                float64 // This is resulting image width
 	Objects              []object.Object
 	Camera               camera.Camera
-	Lights               []object.Object
+	Lights               []object.LightSource
 	Sky                  sky.Sky
 	IntersectionFunction Intersector
 }
@@ -88,11 +88,11 @@ func (s *Scene) AddSky(filename string) error {
 
 func (s *Scene) AddLights() {
 	if s.Lights == nil {
-		s.Lights = []object.Object{}
+		s.Lights = []object.LightSource{}
 	}
 	for _, v := range s.Objects {
 		if ls, ok := v.(object.LightSource); ok && ls.EmitsLight() {
-			s.Lights = append(s.Lights, v)
+			s.Lights = append(s.Lights, ls)
 		}
 	}
 }

@@ -14,6 +14,11 @@ var Blank = Normalized{
 	1,
 }
 
+var Black = Normalized{
+	v.Vec3{0, 0, 0},
+	1,
+}
+
 var White = Normalized{
 	v.Vec3{1, 1, 1},
 	1,

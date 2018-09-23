@@ -92,3 +92,7 @@ func (s Sphere) Intersects2(r v.Ray) (t float64, shape obj.SurfaceElement) {
 func (s Sphere) EmitsLight() bool {
 	return s.Material.IsLighting()
 }
+
+func (s Sphere) LightOrigins() []*v.Vec3 {
+	return []*v.Vec3{s.center.Copy()}
+}

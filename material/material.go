@@ -16,9 +16,12 @@ type Material struct {
 	Emissive color.Normalized
 	// Specular color.Normalized will be ignored for now...
 
-	// [0, 1], 0 fully transparent(in which case why're you rendering this)
-	// or fully opaque
+	// [0, 1], 0 fully transparent or 1 for fully opaque
 	Transparency float64
+
+	// Whether or not this material reflects light
+	// Currently only reflects light once
+	Reflect bool
 
 	BumpTexture texture.Texture
 
@@ -49,6 +52,13 @@ func (m *Material) Diffusive() color.Normalized {
 	return m.Diffuse
 }
 
+func (m *Material) DoesReflect() bool {
+	if m == nil {
+		return false
+	}
+	return m.Reflect
+}
+
 func (m *Material) IsLighting() bool {
 	switch {
 	case m == nil:
@@ -59,4 +69,15 @@ func (m *Material) IsLighting() bool {
 
 	}
 	return false
+}
+
+var DefaultSurfaceBRDF = Lambertian{1}
+
+func (m *Material) SurfaceBRDF() Scatter {
+	switch {
+	case m == nil, m.RenderType == nil:
+		return DefaultSurfaceBRDF
+	default:
+		return m.RenderType
+	}
 }

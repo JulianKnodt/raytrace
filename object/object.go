@@ -2,6 +2,7 @@ package object
 
 import (
 	v "github.com/julianknodt/vector"
+	"raytrace/color"
 )
 
 /*
@@ -22,4 +23,10 @@ type Object interface {
 type LightSource interface {
 	// Whether it emits any light at all
 	EmitsLight() bool
+
+	// Points from which the light source emits light
+	LightOrigins() []*v.Vec3
+
+	// Emitted
+	Emitted() color.Normalized
 }

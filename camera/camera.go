@@ -9,7 +9,7 @@ var DefaultCameraDir = v.Vec3{0, 0, -1}
 // Camera contains a transform as well as specific camera metadata
 type Camera struct {
 	// Location and Direction of Camera
-	Transform v.Ray
+	Transform *v.Ray
 
 	// Represents the up direction of the camera
 	Up v.Vec3
@@ -38,7 +38,7 @@ func NewCamera(position, direction, up v.Vec3,
 	width, height int,
 ) *Camera {
 	return &Camera{
-		Transform:      *v.NewRay(position, direction),
+		Transform:      v.NewRay(position, direction),
 		Up:             *up.Unit(),
 		Right:          *direction.Cross(up).UnitSet(),
 		RenderDistance: renderDistance,
@@ -61,9 +61,9 @@ func (c Camera) InverseHeight() float64 {
 
 func DefaultCamera() Camera {
 	return Camera{
-		Transform:      v.Ray{Origin: v.Vec3{0, 0, 0}, Direction: v.Vec3{0, 0, -1}},
+		Transform:      v.NewRay(v.Vec3{0, 0, 0}, v.Vec3{0, 0, -1}),
 		Up:             v.Vec3{0, 1, 0},
-		Right:          v.Vec3{1, 0, 0},
+		Right:          v.Vec3{-1, 0, 0},
 		RenderDistance: 1,
 		Width:          5, // This is world space
 		Height:         5, // This is world space

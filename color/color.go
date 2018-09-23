@@ -9,7 +9,7 @@ import (
 // in [0, 1]
 // And alpha as represented as uint8
 type Normalized struct {
-	// RGB is the RGB of the color
+	// Vec is the RGB of the color
 	RGB v.Vec3
 
 	A float64
@@ -59,5 +59,10 @@ func (n *Normalized) ToImageColor() color.RGBA {
 func (n *Normalized) Mix(o Normalized) *Normalized {
 	n.RGB = *n.RGB.Add(o.RGB).SMulSet(0.5)
 	n.A = (n.A + o.A) / 2
+	return n
+}
+
+func (n *Normalized) MixVec(vec v.Vec3) *Normalized {
+	n.RGB = *n.RGB.Add(vec).SMulSet(0.5)
 	return n
 }
