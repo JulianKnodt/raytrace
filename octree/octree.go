@@ -51,6 +51,7 @@ type OctreeItem interface {
 
 func (o *Octree) Insert(items ...OctreeItem) {
 	o.UnprocessedValues = append(o.UnprocessedValues, items...)
+	o.Flatten()
 }
 
 func (o *Octree) Len() int {

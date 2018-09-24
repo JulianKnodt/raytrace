@@ -1,0 +1,6 @@
+build: fmt
+	go build
+
+fmt:
+	go fmt ./...
+	go vet ./...

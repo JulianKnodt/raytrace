@@ -83,3 +83,16 @@ func (c Camera) RayTo(x, y float64) v.Ray {
 			AddSet(*vComp),
 	)
 }
+
+// Convenience for seeing what the box that the camera can see is
+func (c Camera) Range() (min, max v.Vec3) {
+	min = *c.Transform.Origin.
+		Add(*c.Transform.Direction.SMul(c.RenderDistance)).
+		AddSet(*c.Right.Inv().SMulSet(c.Width / 2)).
+		AddSet(*c.Up.Inv().SMulSet(c.Height / 2))
+	max = *c.Transform.Origin.
+		Add(*c.Transform.Direction.SMul(c.RenderDistance)).
+		AddSet(*c.Right.SMul(c.Width / 2)).
+		AddSet(*c.Up.SMul(c.Height / 2))
+	return
+}

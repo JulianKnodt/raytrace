@@ -29,6 +29,7 @@ func Sub(a float64) float64 {
 }
 
 func main() {
+	flag.Parse()
 	objects := make([]object.Object, 0, numItems+1)
 	for i := 0; i < numItems; i++ {
 		objects = append(
