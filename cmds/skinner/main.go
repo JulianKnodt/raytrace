@@ -28,7 +28,7 @@ var (
 	stlFile = flag.String("stl", "", "The stl file to be be used as a reference")
 	isAscii = flag.Bool("ascii", false, "Use Ascii STL file parsing?")
 
-	thres = flag.Float64("t", 0.00001, `Max area threshold allowed for triangles relative to the
+	thres = flag.Float64("t", 0.01, `Max area threshold allowed for triangles relative to the
   distance between the corners of the bounding box for the whole shape. Should be between [0,1]
   but can be bigger than 1.`)
 	vecPer  = flag.Float64("yield", 0.05, "Percent of vectors to use as triangles while rendering")
@@ -45,6 +45,14 @@ var (
 	rotateY = flag.Float64("ry", 0, "Amt to rotate in the y direction")
 	rotateZ = flag.Float64("rz", 0, "Amt to rotate in the z direction")
 )
+
+func ValidTriple(a, b, c v.Vec3, maxArea float64) bool {
+	return v.TriangleArea(a, b, c) < maxArea
+	/*		a.Sub(b).SqrMagn() < 0.75 && a.Sub(b).SqrMagn() > 0.005 &&
+			c.Sub(b).SqrMagn() < 0.75 && c.Sub(b).SqrMagn() > 0.005 &&
+			a.Sub(c).SqrMagn() < 0.75 && a.Sub(c).SqrMagn() > 0.005
+	*/
+}
 
 func clamp(a float64) float64 {
 	switch {
@@ -97,6 +105,7 @@ func main() {
 	} else {
 		original, err = stl.DecodeBinary(f)
 	}
+	fmt.Printf("Original has %d triangles\n", len(original))
 
 	if err != nil {
 		panic(err)
@@ -155,6 +164,7 @@ func main() {
 
 	fmt.Println("STL within ", *min, *max)
 	maxArea := min.Sub(*max).Magn() * (*thres)
+	fmt.Println("Max area is: ", maxArea)
 
 	// Randomly add triangles between vertices between certain threshold of area and/or length
 	// of various colours
@@ -174,9 +184,9 @@ func main() {
 			for b == i || a == b {
 				b = rs.Intn(numTriangles)
 			}
-			if v.TriangleArea(vectors[a], vectors[b], vectors[i]) < maxArea {
+			if ValidTriple(vectors[a], vectors[b], vectors[i], maxArea) {
 				mat := &material.Material{
-					Ambient:    color.Normalized{RGB: *v.Random(rs), A: 1},
+					Ambient:    colors[rs.Intn(len(colors))],
 					RenderType: material.Lambertian{Albedo: 1},
 				}
 				triangles = append(triangles, shapes.NewTriangle(vectors[a], vectors[b], vectors[i], mat))
