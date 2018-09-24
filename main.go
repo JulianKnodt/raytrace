@@ -7,7 +7,10 @@ import (
 	"image/png"
 	"os"
 	"raytrace/camera"
+	"raytrace/material"
+	"raytrace/object"
 	"raytrace/scene"
+	"raytrace/shapes"
 
 	"runtime/pprof"
 )
@@ -40,13 +43,15 @@ func main() {
 		Width:                *width,
 		IntersectionFunction: intersector(),
 		Camera:               camera.DefaultCamera(),
+		Lights: []object.LightSource{
+			shapes.NewSphere(v.Vec3{-12, 0, -12}, 1, material.WhiteLightMaterial()),
+		},
 	}
 
 	defer cprofile()()
 	scene.AddObj(*obj, v.Vec3{x, y, z})
 	scene.AddOff(*off, v.Vec3{x, y, z})
 	scene.AddSky(*skyFile)
-	scene.AddLights()
 	img := scene.Render()
 
 	file, _ := os.OpenFile(*out, os.O_WRONLY|os.O_CREATE, 0600)
