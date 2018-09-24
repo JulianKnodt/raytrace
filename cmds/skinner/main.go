@@ -22,16 +22,20 @@ import (
 )
 
 var (
-	out     = flag.String("o", "out.png", "The location of the resulting gif")
+	out  = flag.String("o", "out.png", "The location of the resulting gif")
+	comp = flag.String("comp", "", "The location of the direct rendering of the stl file")
+
 	stlFile = flag.String("stl", "", "The stl file to be be used as a reference")
 	isAscii = flag.Bool("ascii", false, "Use Ascii STL file parsing?")
-	thres   = flag.Float64("t", 0.5, `Max area threshold allowed for triangles relative to the
+
+	thres = flag.Float64("t", 0.00001, `Max area threshold allowed for triangles relative to the
   distance between the corners of the bounding box for the whole shape. Should be between [0,1]
   but can be bigger than 1.`)
-	showSeed = flag.Bool("show-seed", false, "Whether or not to show random seed")
-	vecPer   = flag.Float64("yield", 0.05, "Percent of vectors to use as triangles while rendering")
-	scaling  = flag.Float64("scale", 1, "How much to scale the image so that it fits within a 1x1 box")
+	vecPer  = flag.Float64("yield", 0.05, "Percent of vectors to use as triangles while rendering")
+	scaling = flag.Float64("scale", 1, "How much to scale the image so that it fits within a 1x1 box")
+
 	seed     = flag.Int64("seed", time.Now().UnixNano(), "Seed to use when rendering the image")
+	showSeed = flag.Bool("show-seed", false, "Whether or not to show random seed")
 
 	shiftX = flag.Float64("sx", 0, "Amt to shift in the x direction")
 	shiftY = flag.Float64("sy", 0, "Amt to shift in the y direction")
@@ -103,22 +107,62 @@ func main() {
 		vectors = append(vectors, v1, v2, v3)
 	}
 
-	vectors = v.Rotate(v.Shift(vectors, *shiftX, *shiftY, *shiftZ), *rotateX, *rotateY, *rotateZ)
+	//vectors = v.Rotate(vectors, *rotateX, *rotateY, *rotateZ)
+	vectors = v.Shift(vectors, *shiftX, *shiftY, *shiftZ)
+
 	min, max := v.Inf(1), v.Inf(-1)
 	for _, vec := range vectors {
 		min.MinSet(vec)
 		max.MaxSet(vec)
 	}
 
+	c := camera.DefaultCamera()
+	c.Width = 2
+	c.Height = 2
+	c.Transform.Origin[2] = 2
+
+	if *comp != "" {
+		box := bounding.Box{Min: *min, Max: *max}
+		oct := octree.NewEmptyOctree(box)
+		ts := stl.ToTriangles(original, &material.Material{
+			Ambient: color.DefaultColor,
+		})
+		items := make([]octree.OctreeItem, len(ts))
+		for i, t := range ts {
+			items[i] = t
+		}
+		oct.Insert(items...)
+		scene := scene.Scene{
+			Height:               600.0,
+			Width:                600.0,
+			IntersectionFunction: scene.Direct,
+			Camera:               c,
+			Objects:              []object.Object{oct},
+			Lights: []object.LightSource{
+				shapes.NewSphere(v.Vec3{-12, 0, 12}, 1, material.WhiteLightMaterial()),
+			},
+		}
+		img := scene.Render()
+		f, err := os.Create(*comp)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		if err = png.Encode(f, img); err != nil {
+			panic(err)
+		}
+	}
+
+	fmt.Println("STL within ", *min, *max)
 	maxArea := min.Sub(*max).Magn() * (*thres)
 
 	// Randomly add triangles between vertices between certain threshold of area and/or length
 	// of various colours
 
-	triangles := make([]octree.OctreeItem, 0, len(vectors))
 	numTriangles := len(vectors)
 	maxVecs := int(clamp(*vecPer) * float64(numTriangles))
 	fmt.Printf("Rendering %d triangles\n", maxVecs)
+	triangles := make([]octree.OctreeItem, 0, maxVecs)
 
 	for i := 0; i < maxVecs; i++ {
 		for {
@@ -127,16 +171,15 @@ func main() {
 				a = rs.Intn(numTriangles)
 			}
 			b := i
-			for b == i {
+			for b == i || a == b {
 				b = rs.Intn(numTriangles)
 			}
 			if v.TriangleArea(vectors[a], vectors[b], vectors[i]) < maxArea {
 				mat := &material.Material{
-					Ambient:    color.Normalized{RGB: *v.Random(rs).SMulSet(0.3).OpSet(AddOp(0.3)), A: 1},
+					Ambient:    color.Normalized{RGB: *v.Random(rs), A: 1},
 					RenderType: material.Lambertian{Albedo: 1},
 				}
-				triangles = append(triangles,
-					shapes.NewTriangle(vectors[a], vectors[b], vectors[i], mat))
+				triangles = append(triangles, shapes.NewTriangle(vectors[a], vectors[b], vectors[i], mat))
 				break
 			}
 		}
@@ -145,10 +188,7 @@ func main() {
 	oct := octree.NewEmptyOctree(box)
 	oct.Insert(triangles...)
 
-	c := camera.DefaultCamera()
-	c.Width = 2
-	c.Height = 2
-	c.Transform.Origin[2] = 2
+	fmt.Println("Finished finding triangles: Camera looking at")
 	fmt.Println(c.Range())
 	scene := scene.Scene{
 		Height:               600.0,
@@ -162,16 +202,17 @@ func main() {
 	}
 	// render image
 
+	img := scene.Render()
 	output, err := os.Create(*out)
 	if err != nil {
 		panic(err)
 	}
 	defer output.Close()
-	err = png.Encode(output, scene.Render())
+	err = png.Encode(output, img)
 	if err != nil {
 		panic(err)
 	}
 
 	// Repeat a couple of times to produce a gif
-
+	// TODO
 }
